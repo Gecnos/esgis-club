@@ -31,7 +31,7 @@ Le code est organisé par features (`src/features/<feature>/`), les pages (`src/
 - `src/lib/env.ts` expose `useMocks` (vrai quand `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` sont vides) et `src/lib/supabase.ts` le client (`null` en démo). Chaque `queries.ts` / `api.ts` a deux branches : Supabase si le client existe, sinon les données de `data.ts`.
 - Les pages publiques chargent leurs données par des loaders React Router (`src/pages/loaders.ts`) ; l'espace admin charge son état dans `AdminProvider` (`features/admin/queries.ts`) et écrit via `useAdminActions` → `api.ts`.
 - Images : on stocke des clés R2 (`…Key`), jamais des URLs ; l'affichage passe par `imageUrl()` et `<CoverImage>` (`lib/storage.ts`). Les envois passent par la fonction `supabase/functions/r2-presign`.
-- Le schéma de base et les droits (RLS) sont dans `supabase/schema.sql` ; toute nouvelle table ou colonne doit y être ajoutée, avec sa politique RLS. Procédure de branchement : `docs/supabase.md`.
+- Le schéma de base et les droits (RLS) sont dans `supabase/schema.sql` ; toute nouvelle table ou colonne doit y être ajoutée, avec sa politique RLS. Procédure de branchement : `docs/supabase.md` ; mise en ligne et maintenance : `docs/deploiement.md`. Les comptes sont créés par le Comité via la fonction `admin-users` (seule à utiliser la clé service_role).
 - Authentification : `features/auth` (email + mot de passe, rôle dans la table `profiles`). Le mode démo de connexion n'existe qu'en développement.
 
 ## Conventions Git

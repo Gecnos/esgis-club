@@ -40,6 +40,7 @@ export const router = createBrowserRouter([
           { path: 'comite', ...admin(() => import('./features/admin/components/ComiteDashboard.tsx')) },
           { path: 'comite/dossiers', ...admin(() => import('./features/admin/components/ComiteDossiers.tsx')) },
           { path: 'comite/planning', ...admin(() => import('./features/admin/components/ComitePlanning.tsx')) },
+          { path: 'comite/comptes', ...admin(() => import('./features/accounts/components/ComiteComptes.tsx')) },
         ],
       },
     ],

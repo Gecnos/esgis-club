@@ -14,6 +14,7 @@ export const adminNav: Record<Role, AdminNavItem[]> = {
     { to: '/admin/comite', icon: 'dashboard', label: 'Tableau de bord', short: 'Accueil', end: true },
     { to: '/admin/comite/dossiers', icon: 'folder_open', label: 'Dossiers de création', short: 'Dossiers' },
     { to: '/admin/comite/planning', icon: 'calendar_month', label: 'Club du mois', short: 'Planning' },
+    { to: '/admin/comite/comptes', icon: 'manage_accounts', label: 'Comptes', short: 'Comptes' },
   ],
 }
 
@@ -32,5 +33,6 @@ export const adminHeads: Record<Role, Record<string, [title: string, subtitle: s
     tableau: ['Tableau de bord', "Vue d'ensemble des dossiers en cours et du club du mois."],
     dossiers: ['Dossiers de création', 'Suivi des projets de club, du dépôt à la décision.'],
     planning: ['Planning du club du mois', "Le dernier vendredi de chaque mois, le club programmé organise l'activité ouverte à tous."],
+    comptes: ['Comptes', 'Crée les accès des responsables de club et des membres du Comité.'],
   },
 }

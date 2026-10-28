@@ -1,5 +1,4 @@
 import { useLoaderData } from 'react-router'
-import ChallengeSection from '../features/challenge/components/ChallengeSection.tsx'
 import ClubsSection from '../features/clubs/components/ClubsSection.tsx'
 import CommitteeSection from '../features/committee/components/CommitteeSection.tsx'
 import CreateClubSection from '../features/dossiers/components/CreateClubSection.tsx'
@@ -10,7 +9,7 @@ import ClubOfMonthSection from '../features/planning/components/ClubOfMonthSecti
 import type { accueilLoader } from './loaders.ts'
 
 export default function Accueil() {
-  const { clubs, clubOfMonth, committee, board } = useLoaderData<Awaited<ReturnType<typeof accueilLoader>>>()
+  const { clubs, clubOfMonth, committee } = useLoaderData<Awaited<ReturnType<typeof accueilLoader>>>()
 
   return (
     <>
@@ -20,7 +19,6 @@ export default function Accueil() {
       {clubOfMonth && <ClubOfMonthSection club={clubOfMonth} />}
       <ClubsSection clubs={clubs} clubOfMonthSlug={clubOfMonth?.clubSlug} />
       <CommitteeSection members={committee} />
-      <ChallengeSection board={board} />
       <CreateClubSection />
     </>
   )
