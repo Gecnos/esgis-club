@@ -88,11 +88,6 @@ create table public.committee_members (
   position   integer not null default 0
 );
 
-create table public.challenge_scores (
-  club_slug   text primary key references public.clubs (slug) on delete cascade,
-  points      integer not null default 0,
-  updated_at  date not null default current_date
-);
 
 create table public.club_log (
   id          bigint generated always as identity primary key,
@@ -182,7 +177,6 @@ alter table public.club_activities     enable row level security;
 alter table public.featured_activities enable row level security;
 alter table public.planning            enable row level security;
 alter table public.committee_members   enable row level security;
-alter table public.challenge_scores    enable row level security;
 alter table public.club_log            enable row level security;
 alter table public.dossiers            enable row level security;
 alter table public.dossier_documents   enable row level security;
@@ -196,13 +190,11 @@ create policy "lecture publique" on public.club_activities     for select using 
 create policy "lecture publique" on public.featured_activities for select using (true);
 create policy "lecture publique" on public.planning            for select using (true);
 create policy "lecture publique" on public.committee_members   for select using (true);
-create policy "lecture publique" on public.challenge_scores    for select using (true);
 
 -- Le Comité gère tout le contenu.
 create policy "comité" on public.clubs               for all using (public.app_role() = 'comite') with check (public.app_role() = 'comite');
 create policy "comité" on public.planning            for all using (public.app_role() = 'comite') with check (public.app_role() = 'comite');
 create policy "comité" on public.committee_members   for all using (public.app_role() = 'comite') with check (public.app_role() = 'comite');
-create policy "comité" on public.challenge_scores    for all using (public.app_role() = 'comite') with check (public.app_role() = 'comite');
 
 -- Un responsable de club gère uniquement la fiche de son club (la garde `clubs_guard` protège nom et catégorie).
 create policy "responsable" on public.clubs

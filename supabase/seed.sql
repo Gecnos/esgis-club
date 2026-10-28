@@ -59,9 +59,6 @@ from (values
 ) as v(role, name, filiere, position)
 where not exists (select 1 from public.committee_members);
 
-insert into public.challenge_scores (club_slug, points) values
-  ('robotique', 1240), ('danse', 1105), ('entrepreneuriat', 980), ('football', 920), ('dev', 870)
-on conflict (club_slug) do nothing;
 
 -- Planning de l'année 2026–2027 (adapter les dates chaque année).
 insert into public.planning (month, club_slug, vacation) values

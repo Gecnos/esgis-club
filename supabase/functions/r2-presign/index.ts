@@ -8,11 +8,16 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import { S3Client, PutObjectCommand } from 'npm:@aws-sdk/client-s3@3'
 import { getSignedUrl } from 'npm:@aws-sdk/s3-request-presigner@3'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': Deno.env.get('ALLOWED_ORIGIN') ?? '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+// ALLOWED_ORIGIN : une ou plusieurs origines séparées par des virgules (ex. https://clubs.esgis.bj,http://localhost:5173).
+const allowedOrigins = (Deno.env.get('ALLOWED_ORIGIN') ?? '').split(',').map((o) => o.trim()).filter(Boolean)
+const corsFor = (req: Request) => {
+  const origin = req.headers.get('Origin') ?? ''
+  return {
+    'Access-Control-Allow-Origin': allowedOrigins.length === 0 ? '*' : allowedOrigins.includes(origin) ? origin : allowedOrigins[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    Vary: 'Origin',
+  }
 }
-
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp']
 const DOC_TYPES = [
   'application/pdf',
@@ -24,10 +29,12 @@ const DOC_TYPES = [
 const MAX_IMAGE = 10 * 1024 * 1024
 const MAX_DOC = 20 * 1024 * 1024
 
-const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
-
 Deno.serve(async (req) => {
+  // Les en-têtes CORS dépendent de la requête : définis ici pour rester propres à chaque appel concurrent.
+  const corsHeaders = corsFor(req)
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
   if (req.method !== 'POST') return json({ error: 'Méthode non autorisée' }, 405)
 

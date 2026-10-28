@@ -17,7 +17,7 @@ export default function CommitteeSection({ members }: { members: Member[] }) {
             <h2 className="m-0 text-[28px]/9 font-semibold tracking-[-.01em]">Qui gère les clubs ?</h2>
             <p className="m-0 text-pretty text-base/6 text-muted">
               Le Comité de Gestion des Clubs est composé d'étudiants élus. Il valide les nouveaux projets de club, fixe
-              le calendrier du club du mois et organise le challenge inter-clubs.
+              le calendrier du club du mois et accompagne les responsables de club.
             </p>
           </div>
           <ul className="m-0 grid list-none grid-cols-3 gap-3 p-0">
