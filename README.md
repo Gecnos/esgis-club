@@ -2,7 +2,6 @@
 
 Site web des clubs étudiants de l'ESGIS : trouver un club, découvrir le club du mois, déposer un dossier de création de club, et espace d'administration pour les responsables de club et le Comité.
 
-La maquette de référence est le projet Claude Design « Planche Maquettes Clubs ESGIS » (pages : Accueil, PageClub, CreerUnClub, Header, Footer, Composants, Maquettes, Admin).
 
 ## Stack
 
@@ -54,7 +53,7 @@ Branches :
 
 - `main` : production, jamais de commit direct.
 - `dev` : branche d'intégration, on y merge toutes les fonctionnalités.
-- `type/numéro-sujet` : une branche par ticket, créée depuis `dev` (ex. `feat/9-recherche-filtres`).
+
 
 Processus :
 
