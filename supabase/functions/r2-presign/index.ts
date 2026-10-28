@@ -46,22 +46,24 @@ Deno.serve(async (req) => {
   // Dossiers autorisés : clubs/<slug>/<sous-dossier> (images) et dossiers/<uuid> (documents du formulaire public).
   const isDossier = /^dossiers\/[0-9a-f-]{36}$/.test(folder)
   const clubMatch = folder.match(/^clubs\/([a-z0-9-]+)\/[a-z0-9-]+$/)
-  if (!isDossier && !clubMatch) return json({ error: 'Dossier non autorisé' }, 400)
+  // Photos du site (accueil, équipe du Comité) : site/<sous-dossier> et comite/<sous-dossier>, réservées au Comité.
+  const siteMatch = folder.match(/^(site|comite)\/[a-z0-9-]+$/)
+  if (!isDossier && !clubMatch && !siteMatch) return json({ error: 'Dossier non autorisé' }, 400)
 
   const allowed = isDossier ? [...DOC_TYPES, ...IMAGE_TYPES] : IMAGE_TYPES
   const maxSize = isDossier ? MAX_DOC : MAX_IMAGE
   if (!allowed.includes(contentType)) return json({ error: 'Type de fichier non autorisé' }, 400)
   if (size <= 0 || size > maxSize) return json({ error: 'Fichier trop volumineux' }, 400)
 
-  // Les images des clubs exigent un compte : responsable de ce club, ou Comité.
-  if (clubMatch) {
+  // Les images des clubs exigent un compte : responsable de ce club, ou Comité. Celles du site : Comité seul.
+  if (clubMatch || siteMatch) {
     const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
       global: { headers: { Authorization: req.headers.get('Authorization') ?? '' } },
     })
     const { data: userData } = await supabase.auth.getUser()
     if (!userData.user) return json({ error: 'Connexion requise' }, 401)
     const { data: profile } = await supabase.from('profiles').select('role, club_slug').eq('id', userData.user.id).maybeSingle()
-    const allowedClub = profile?.role === 'comite' || (profile?.role === 'club' && profile.club_slug === clubMatch[1])
+    const allowedClub = profile?.role === 'comite' || (!!clubMatch && profile?.role === 'club' && profile.club_slug === clubMatch[1])
     if (!allowedClub) return json({ error: 'Accès refusé' }, 403)
   }
 

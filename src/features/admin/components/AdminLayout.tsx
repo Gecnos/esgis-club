@@ -8,7 +8,7 @@ import type { ClubView, Role } from '../types.ts'
 import { useAdminActions } from '../useAdminActions.ts'
 import AdminProvider from './AdminProvider.tsx'
 
-const SAVE_VIEWS: string[] = ['fiche', 'bureau', 'activite']
+const SAVE_VIEWS: string[] = ['fiche', 'bureau', 'exemples', 'activite']
 
 function useAdminRoute() {
   const { pathname } = useLocation()

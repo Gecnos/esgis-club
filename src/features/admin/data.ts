@@ -1,5 +1,5 @@
 import { useMocks } from '../../lib/env.ts'
-import type { ClubDraft, Dossier, LogEntry, Photo, Planning } from './types.ts'
+import type { ClubDraft, Dossier, LogEntry, Photo, Planning, PlanningDays } from './types.ts'
 
 // Données de démonstration (mode sans Supabase).
 
@@ -35,6 +35,10 @@ export const initialClub: ClubDraft = {
     { id: 2, role: 'Secrétaire', name: 'Nadège Gbaguidi', filiere: 'Génie logiciel · L2', photoKey: 'demo:portrait', fixed: true },
     { id: 3, role: 'Trésorier', name: 'Rachidi Alao', filiere: 'Réseaux & Télécoms · L2', photoKey: 'demo:portrait', fixed: true },
     { id: 4, role: 'Communication', name: 'Estelle Kiki', filiere: 'Marketing digital · L1', photoKey: null, fixed: true },
+  ],
+  activities: [
+    { id: 1, type: 'Atelier', title: 'Initiation Arduino', text: 'Premier circuit, premières LED, premiers capteurs : aucun prérequis.', photoKey: null },
+    { id: 2, type: 'Compétition', title: 'Course de robots suiveurs de ligne', text: 'Les équipes du club affrontent celles des autres écoles.', photoKey: null },
   ],
   phare: {
     titre: 'Robots en piste : la grande démo',
@@ -137,6 +141,8 @@ export const initialPlanning: Planning = {
   '2027-1': 'dev',
   '2026-11': '__vac',
 }
+
+export const initialPlanningDays: PlanningDays = { '2026-9': '2026-10-30', '2026-10': '2026-11-20' }
 
 export const initialLog: LogEntry[] = [
   { icon: 'photo_library', text: '3 photos ajoutées à la galerie', who: 'Estelle Kiki', when: 'hier, 18h40' },

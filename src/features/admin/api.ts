@@ -64,6 +64,16 @@ export async function saveClub(slug: string, draft: ClubDraft, authorName: strin
   })
   check(featured.error)
 
+  const removedActivities = await supabase.from('club_activities').delete().eq('club_slug', slug)
+  check(removedActivities.error)
+  const activities = draft.activities.filter((a) => a.title.trim())
+  if (activities.length > 0) {
+    const insertedActivities = await supabase.from('club_activities').insert(
+      activities.map((a, i) => ({ club_slug: slug, type: a.type, title: a.title.trim(), text: a.text.trim(), photo_key: a.photoKey, position: i })),
+    )
+    check(insertedActivities.error)
+  }
+
   const log = await supabase.from('club_log').insert({ club_slug: slug, icon: logIcon, text: logText, who: authorName })
   check(log.error)
 }
@@ -91,9 +101,10 @@ export async function updatePhotoLabel(id: number, label: string) {
   check((await supabase.from('club_photos').update({ label }).eq('id', id)).error)
 }
 
-export async function setCoverPhoto(slug: string, photoId: number) {
+/** Choisit la couverture ; la vignette de la carte du club (page d'accueil) suit la même photo. */
+export async function setCoverPhoto(slug: string, photoId: number, photoKey: string | null) {
   if (!supabase) return
-  check((await supabase.from('clubs').update({ cover_photo_id: photoId }).eq('slug', slug)).error)
+  check((await supabase.from('clubs').update({ cover_photo_id: photoId, photo_key: photoKey }).eq('slug', slug)).error)
 }
 
 export async function deletePhoto(id: number) {
@@ -129,4 +140,12 @@ export async function setPlanningMonth(monthKey: string, slug: string) {
   if (!slug) return check((await supabase.from('planning').delete().eq('month', month)).error)
   const vacation = slug === '__vac'
   check((await supabase.from('planning').upsert({ month, club_slug: vacation ? null : slug, vacation })).error)
+}
+
+/** Fixe le jour de l'activité d'un mois déjà programmé (`YYYY-MM-DD`, dans ce mois). */
+export async function setPlanningDay(monthKey: string, isoDay: string) {
+  if (!supabase) return
+  const [y, m] = monthKey.split('-').map(Number)
+  const month = `${y}-${pad((m ?? 0) + 1)}-01`
+  check((await supabase.from('planning').update({ activity_date: isoDay }).eq('month', month)).error)
 }

@@ -14,7 +14,6 @@ export default function JoinBar({ clubName, href }: Props) {
     <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-line bg-white px-4 pt-3 pb-[calc(12px+env(safe-area-inset-bottom))] shadow-[0_-8px_24px_rgb(11_31_58/0.08)] md:hidden">
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-[15px]/[22px] font-semibold">Club {clubName}</span>
-        <span className="text-[13px]/[18px] font-medium text-muted">Cotisation 2 000 FCFA</span>
       </span>
       <a
         href={href}

@@ -3,7 +3,7 @@ import { uploadImage } from '../../lib/storage.ts'
 import { TODAY } from './data.ts'
 import {
   addPhotos, discardDraft, dossierMessages, editDraft, failToast, markPublished, patchDossier, publishLabels,
-  removePhoto, restore, setCover, setPhotoLabel, setPlanning,
+  removePhoto, restore, setCover, setPhotoLabel, setPlanning, setPlanningDay,
 } from './actions.ts'
 import { useAdmin } from './adminContext.ts'
 import * as api from './api.ts'
@@ -46,6 +46,8 @@ export function useAdminActions() {
       }),
     uploadLogo: (file: File) => editFile(file, 'logo', (d, key) => { d.logoKey = key }),
     uploadVisual: (file: File) => editFile(file, 'activite', (d, key) => { d.phare.visuelKey = key }),
+    uploadActivityPhoto: (index: number, file: File) =>
+      editFile(file, 'exemples', (d, key) => { if (d.activities[index]) d.activities[index].photoKey = key }),
     uploadBureauPhoto: (index: number, file: File) =>
       editFile(file, 'bureau', (d, key) => { if (d.bureau[index]) d.bureau[index].photoKey = key }),
 
@@ -66,7 +68,7 @@ export function useAdminActions() {
     savePhotoLabel: (id: number, label: string) => run(() => api.updatePhotoLabel(id, label)),
     setCover: (id: number) =>
       run(async () => {
-        await api.setCoverPhoto(slug, id)
+        await api.setCoverPhoto(slug, id, state.photos.find((p) => p.id === id)?.key ?? null)
         apply((s) => setCover(s, id))
       }),
     removePhoto: (id: number) =>
@@ -111,6 +113,11 @@ export function useAdminActions() {
       run(async () => {
         await api.setPlanningMonth(key, clubSlug)
         apply((s) => setPlanning(s, key, clubSlug))
+      }),
+    setDay: (key: string, isoDay: string) =>
+      run(async () => {
+        await api.setPlanningDay(key, isoDay)
+        apply((s) => setPlanningDay(s, key, isoDay))
       }),
   }
 }

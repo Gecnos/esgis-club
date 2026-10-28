@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router'
 import Icon from '../../../components/Icon.tsx'
 import { useAdmin } from '../../admin/adminContext.ts'
 import { Card, cardClass, ErrorNote, Field, ghostButton, inputClass, outlineButton, primaryButton, TextInput } from '../../admin/components/ui.tsx'
@@ -11,7 +12,7 @@ import type { AccountErrors } from '../schemas.ts'
 import type { Account } from '../types.ts'
 
 type Form = { name: string; email: string; password: string; role: Role; clubSlug: string }
-const emptyForm = (): Form => ({ name: '', email: '', password: generatePassword(), role: 'club', clubSlug: '' })
+const emptyForm = (clubSlug = ''): Form => ({ name: '', email: '', password: generatePassword(), role: 'club', clubSlug })
 
 /** Identifiants à transmettre une seule fois : le mot de passe n'est plus consultable ensuite. */
 type Handout = { email: string; password: string; label: string }
@@ -21,7 +22,9 @@ export default function ComiteComptes() {
   const { user } = useAuth()
   const [accounts, setAccounts] = useState<Account[] | null>(null)
   const [loadError, setLoadError] = useState('')
-  const [form, setForm] = useState<Form>(emptyForm)
+  // `?club=slug` (depuis la page Clubs) préremplit le club du nouveau responsable.
+  const [searchParams] = useSearchParams()
+  const [form, setForm] = useState<Form>(() => emptyForm(searchParams.get('club') ?? ''))
   const [errors, setErrors] = useState<AccountErrors>({})
   const [busy, setBusy] = useState(false)
   const [formError, setFormError] = useState('')
