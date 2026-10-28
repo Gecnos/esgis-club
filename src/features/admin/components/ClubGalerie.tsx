@@ -1,20 +1,12 @@
 import Icon from '../../../components/Icon.tsx'
-import { addPhotos, removePhoto, setCover, setPhotoLabel } from '../actions.ts'
+import { imageUrl } from '../../../lib/storage.ts'
 import { useAdmin } from '../adminContext.ts'
-
-function toItems(files: File[]) {
-  return files
-    .filter((f) => f.type.startsWith('image/'))
-    .map((f) => ({ label: f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' '), url: URL.createObjectURL(f) }))
-}
+import { useAdminActions } from '../useAdminActions.ts'
 
 export default function ClubGalerie() {
-  const { state, apply } = useAdmin()
-
-  function add(files: File[]) {
-    const items = toItems(files)
-    if (items.length > 0) apply((s) => addPhotos(s, items))
-  }
+  const { state } = useAdmin()
+  const actions = useAdminActions()
+  const add = (files: File[]) => void actions.addPhotos(files)
 
   return (
     <div className="flex flex-col gap-6">
@@ -78,12 +70,12 @@ export default function ClubGalerie() {
               }`}
             >
               <div className="relative aspect-[4/3] bg-[repeating-linear-gradient(135deg,#e1e6ee_0_10px,#eaeef4_10px_20px)]">
-                {p.url ? (
+                {imageUrl(p.key) ? (
                   <span
                     role="img"
                     aria-label={p.label}
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${p.url})` }}
+                    style={{ backgroundImage: `url(${imageUrl(p.key)})` }}
                   />
                 ) : (
                   <span className="absolute bottom-2 left-2.5 font-mono text-[11px] text-muted">photo</span>
@@ -100,7 +92,8 @@ export default function ClubGalerie() {
                   aria-label={`Légende de la photo ${i + 1}`}
                   placeholder="Légende"
                   value={p.label}
-                  onChange={(e) => apply((s) => setPhotoLabel(s, p.id, e.target.value))}
+                  onChange={(e) => actions.renamePhoto(p.id, e.target.value)}
+                  onBlur={(e) => void actions.savePhotoLabel(p.id, e.target.value)}
                   className="h-11 w-full rounded-[10px] border border-[#c9d1dd] px-2.5 font-[inherit] text-sm text-navy outline-none focus:border-navy"
                 />
                 <div className="flex items-center justify-between gap-1">
@@ -109,7 +102,7 @@ export default function ClubGalerie() {
                   ) : (
                     <button
                       type="button"
-                      onClick={() => apply((s) => setCover(s, p.id))}
+                      onClick={() => void actions.setCover(p.id)}
                       className="flex h-11 cursor-pointer items-center gap-1 rounded-[10px] border-0 bg-transparent px-2 font-[inherit] text-[13px] font-semibold text-navy hover:bg-soft"
                     >
                       <Icon name="star" size={18} />
@@ -119,7 +112,7 @@ export default function ClubGalerie() {
                   <button
                     type="button"
                     aria-label="Supprimer la photo"
-                    onClick={() => apply((s) => removePhoto(s, p.id))}
+                    onClick={() => void actions.removePhoto(p.id)}
                     className="flex size-11 cursor-pointer items-center justify-center rounded-[10px] border-0 bg-transparent text-muted hover:bg-soft hover:text-accent"
                   >
                     <Icon name="delete" size={20} />

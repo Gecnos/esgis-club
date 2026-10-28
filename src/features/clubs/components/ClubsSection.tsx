@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
+import CoverImage from '../../../components/CoverImage.tsx'
 import Icon from '../../../components/Icon.tsx'
 import { categories } from '../types.ts'
 import type { Category, Club } from '../types.ts'
 
 type Filter = 'Tous' | Category
 
-type Props = { clubs: Club[]; clubOfMonthSlug: string }
+type Props = { clubs: Club[]; clubOfMonthSlug?: string }
 
 export default function ClubsSection({ clubs, clubOfMonthSlug }: Props) {
   const [filter, setFilter] = useState<Filter>('Tous')
@@ -56,6 +57,7 @@ export default function ClubsSection({ clubs, clubOfMonthSlug }: Props) {
               className="flex flex-col overflow-hidden rounded-xl bg-white text-navy no-underline shadow-[0_1px_2px_rgb(11_31_58/0.06),0_4px_16px_rgb(11_31_58/0.05)] transition hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgb(11_31_58/0.06),0_14px_30px_rgb(11_31_58/0.10)]"
             >
               <div className="ph-light relative flex aspect-[16/10] items-end p-3 font-mono text-[11px] text-muted">
+                <CoverImage src={c.photoKey} />
                 photo · {c.photoLabel}
                 <span className="absolute left-3 top-3 rounded-full bg-white px-2.5 py-1 font-sans text-[13px]/[18px] font-medium shadow-[0_1px_3px_rgb(11_31_58/0.12)]">
                   {c.category}

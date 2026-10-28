@@ -73,7 +73,12 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-wrap justify-between gap-3 border-t border-white/10 pt-6 text-[13px]/[18px] font-medium text-mist">
           <span>© ESGIS Bénin – Comité de Gestion des Clubs</span>
-          <span>Année universitaire 2026–2027</span>
+          <span className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <Link to="/connexion" className="font-semibold text-white no-underline hover:underline">
+              Espace responsables
+            </Link>
+            Année universitaire 2026–2027
+          </span>
         </div>
       </div>
     </footer>

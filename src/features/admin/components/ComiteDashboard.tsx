@@ -94,7 +94,7 @@ export default function ComiteDashboard() {
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="text-[13px]/[18px] font-medium text-muted">{i === 0 ? 'Ce mois-ci' : 'Le mois prochain'}</span>
                   <span className="text-base/6 font-semibold">
-                    {slug && slug !== '__vac' ? `Club ${clubName(slug)}` : 'Aucun club programmé'}
+                    {slug && slug !== '__vac' ? `Club ${clubName(state.clubOptions, slug)}` : 'Aucun club programmé'}
                   </span>
                 </span>
               </div>

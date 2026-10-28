@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import CoverImage from '../../../components/CoverImage.tsx'
 import Icon from '../../../components/Icon.tsx'
 import type { ClubDetail } from '../types.ts'
 import { whatsappLink } from '../whatsapp.ts'
@@ -21,7 +22,8 @@ export default function ClubHero({ club, isClubOfMonth }: { club: ClubDetail; is
   return (
     <section>
       <div className="ph-navy relative h-[clamp(176px,24vw,320px)]">
-        <div className="wrap flex h-full flex-col justify-between py-4">
+        <CoverImage src={club.coverKey} alt={`Couverture du Club ${club.name}`} />
+        <div className="wrap relative flex h-full flex-col justify-between py-4">
           <nav aria-label="Fil d'Ariane" className="flex flex-wrap gap-2 text-[13px]/[18px] font-medium text-mist">
             <Link to="/" className="text-white no-underline">Accueil</Link>
             <span>/</span>
@@ -35,7 +37,8 @@ export default function ClubHero({ club, isClubOfMonth }: { club: ClubDetail; is
 
       <div className="wrap">
         <div className="relative -mt-[clamp(40px,4vw,56px)] size-[clamp(80px,8vw,112px)] rounded-2xl bg-white p-1 shadow-[0_8px_24px_rgb(11_31_58/0.16)]">
-          <div className="flex size-full items-center justify-center rounded-xl bg-navy text-[clamp(24px,2.4vw,32px)] font-bold tracking-[-.02em] text-white">
+          <div className="relative flex size-full items-center justify-center overflow-hidden rounded-xl bg-navy text-[clamp(24px,2.4vw,32px)] font-bold tracking-[-.02em] text-white">
+            <CoverImage src={club.logoKey} alt={`Logo du Club ${club.name}`} />
             {initials(club.name)}
           </div>
         </div>

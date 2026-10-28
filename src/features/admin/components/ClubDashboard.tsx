@@ -7,7 +7,7 @@ import { Card } from './ui.tsx'
 export default function ClubDashboard() {
   const { state } = useAdmin()
   const { pct, checks } = getCompletion(state.draft, state.photos, state.cover)
-  const month = getClubMonth(state.planning, state.saved.phare.titre)
+  const month = getClubMonth(state.planning, state.club.slug, state.saved.phare.titre)
 
   return (
     <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),1fr))] items-start gap-6">
@@ -53,7 +53,7 @@ export default function ClubDashboard() {
           <h2 className="m-0 text-[28px]/9 font-semibold">{month.label}</h2>
           <span className="flex items-center gap-2.5 text-[15px]/[22px]">
             <Icon name="calendar_month" size={20} className="text-mist" />
-            {month.date} · {month.countdown}
+            {month.countdown ? `${month.date} · ${month.countdown}` : month.date}
           </span>
           <span className="flex items-center gap-2.5 text-[15px]/[22px]">
             <Icon name="event" size={20} className="text-mist" />
