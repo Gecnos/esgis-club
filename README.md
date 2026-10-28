@@ -65,6 +65,3 @@ Processus :
 
 Types de commit : `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`.
 
-## Hooks Git (à installer)
-
-Prévu avec husky : lint et formatage des fichiers modifiés à chaque commit (lint-staged), contrôle du message de commit (commitlint), détection de secrets avec gitleaks si l'outil est installé en local.
