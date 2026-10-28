@@ -1,7 +1,9 @@
 export const navLinks = [
-  { to: '/', label: 'Accueil' },
-  { to: '/clubs', label: 'Les clubs' },
-  { to: '/club-du-mois', label: 'Club du mois' },
-  { to: '/comite', label: 'Le Comité' },
-  { to: '/creer-un-club', label: 'Créer un club' },
-]
+  { key: 'accueil', label: 'Accueil', to: '/#top' },
+  { key: 'clubs', label: 'Les clubs', to: '/#clubs' },
+  { key: 'mois', label: 'Club du mois', to: '/#club-du-mois' },
+  { key: 'comite', label: 'Le Comité', to: '/#comite' },
+  { key: 'creer', label: 'Créer un club', to: '/#creer' },
+] as const
+
+export const joinLink = '/#clubs'
