@@ -2,8 +2,8 @@ import Icon from '../../../components/Icon.tsx'
 
 const infos = [
   { icon: 'schedule', label: 'Rendez-vous', text: 'Clubs chaque vendredi dès midi' },
-  { icon: 'event', label: 'Chaque mois', text: 'Une activité ouverte à tous le dernier vendredi du mois' },
-  { icon: 'payments', label: 'Adhésion', text: 'Cotisation : 2 000 FCFA' },
+  { icon: 'event', label: 'Chaque mois', text: 'Une activité ouverte à tous, organisée par le club du mois' },
+  { icon: 'chat', label: 'Adhésion', text: 'Rejoins un club en un message WhatsApp' },
 ]
 
 export default function InfoBar() {

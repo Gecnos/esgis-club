@@ -1,8 +1,9 @@
 import Icon from '../../../components/Icon.tsx'
 import { useMediaQuery } from '../../../lib/useMediaQuery.ts'
-import { editDraft } from '../actions.ts'
+import { imageUrl } from '../../../lib/storage.ts'
 import { useAdmin } from '../adminContext.ts'
 import { getClubMonth } from '../queries.ts'
+import { useAdminActions } from '../useAdminActions.ts'
 import { Card, Field, FileButton, smallInputClass, TextAreaInput, TextInput } from './ui.tsx'
 
 const timeInput =
@@ -11,11 +12,13 @@ const timeInput =
 const hh = (t: string) => t.replace(':', 'h')
 
 export default function ClubActivite() {
-  const { state, apply } = useAdmin()
+  const { state } = useAdmin()
+  const actions = useAdminActions()
   const isMobile = useMediaQuery('(max-width: 899px)')
   const p = state.draft.phare
-  const month = getClubMonth(state.planning, state.saved.phare.titre)
-  const set = (edit: (phare: typeof p) => void) => apply((s) => editDraft(s, (d) => edit(d.phare)))
+  const month = getClubMonth(state.planning, state.planningDays, state.club.slug, state.saved.phare.titre)
+  const set = (edit: (phare: typeof p) => void) => actions.edit((d) => edit(d.phare))
+  const visual = imageUrl(p.visuelKey)
 
   return (
     <div className="flex flex-col gap-6">
@@ -84,12 +87,12 @@ export default function ClubActivite() {
             <span className="text-sm/5 font-semibold">Visuel</span>
             <FileButton
               accept="image/*"
-              onFiles={([file]) => file && set((x) => { x.visuelUrl = URL.createObjectURL(file) })}
+              onFiles={([file]) => file && void actions.uploadVisual(file)}
               className="flex min-h-16 items-center gap-3 rounded-xl border-[1.5px] border-dashed border-[#8a95a8] bg-[#fafbfd] px-4 py-3 hover:border-navy"
             >
               <Icon name="image" size={24} />
               <span className="flex flex-col">
-                <span className="text-[15px]/[22px] font-semibold">{p.visuelUrl ? 'Remplacer le visuel' : 'Ajouter un visuel'}</span>
+                <span className="text-[15px]/[22px] font-semibold">{p.visuelKey ? 'Remplacer le visuel' : 'Ajouter un visuel'}</span>
                 <span className="text-[13px]/[18px] font-medium text-muted">Paysage 4:3 conseillé · JPG ou PNG</span>
               </span>
             </FileButton>
@@ -103,8 +106,8 @@ export default function ClubActivite() {
           </span>
           <article className="overflow-hidden rounded-xl bg-navy text-white shadow-[0_16px_40px_rgb(11_31_58/0.18)]">
             <div className="ph-navy relative aspect-video">
-              {p.visuelUrl ? (
-                <span aria-hidden="true" className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${p.visuelUrl})` }} />
+              {visual ? (
+                <span aria-hidden="true" className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${visual})` }} />
               ) : (
                 <span className="absolute bottom-2.5 left-3 font-mono text-[11px] text-steel">visuel de l'activité</span>
               )}

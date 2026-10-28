@@ -1,3 +1,4 @@
+import CoverImage from '../../../components/CoverImage.tsx'
 import type { Activity } from '../types.ts'
 
 export default function ClubActivities({ activities }: { activities: Activity[] }) {
@@ -8,6 +9,7 @@ export default function ClubActivities({ activities }: { activities: Activity[] 
         {activities.map((a) => (
           <article key={a.title} className="flex flex-col overflow-hidden rounded-xl bg-soft">
             <div className="relative flex aspect-[4/3] items-end bg-[repeating-linear-gradient(135deg,#e1e6ee_0_10px,#eaeef4_10px_20px)] p-3 font-mono text-[11px] text-muted">
+              <CoverImage src={a.photoKey} />
               {a.photo}
               <span className="absolute left-3 top-3 rounded-full bg-white px-2.5 py-1 font-sans text-[13px]/[18px] font-medium">
                 {a.type}

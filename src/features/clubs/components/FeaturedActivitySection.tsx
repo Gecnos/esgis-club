@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import CoverImage from '../../../components/CoverImage.tsx'
 import Icon from '../../../components/Icon.tsx'
 import type { FeaturedActivity } from '../types.ts'
 
@@ -37,7 +38,8 @@ export default function FeaturedActivitySection({ clubName, featured }: Props) {
               ))}
             </ol>
           </div>
-          <div className="ph-navy flex min-h-[clamp(220px,28vw,420px)] items-end p-4 font-mono text-xs text-steel">
+          <div className="ph-navy relative flex min-h-[clamp(220px,28vw,420px)] items-end p-4 font-mono text-xs text-steel">
+            <CoverImage src={featured.visualKey} alt={featured.title} />
             {featured.photo}
           </div>
         </article>
@@ -50,7 +52,7 @@ export default function FeaturedActivitySection({ clubName, featured }: Props) {
             <span className="rounded-full bg-accent px-2.5 py-1 text-[13px]/[18px] font-medium text-white">Bientôt à l'honneur</span>
             <h3 className="m-0 mt-1 text-xl/7 font-semibold">Le mois du Club {clubName} arrive</h3>
             <p className="m-0 max-w-[620px] text-pretty text-base/6 text-muted">
-              Chaque club organise à son tour l'activité ouverte à tous du dernier vendredi du mois. La date du Club{' '}
+              Chaque club organise à son tour l'activité ouverte à tous du mois. La date du Club{' '}
               {clubName} sera annoncée par le Comité.
             </p>
             <Link

@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router'
 import Icon from '../../../components/Icon.tsx'
 import { addDays, fmt } from '../../../lib/dates.ts'
 import { useMediaQuery } from '../../../lib/useMediaQuery.ts'
-import { approveDossier, rejectDossier, scheduleDefense, startStudy } from '../actions.ts'
+import { useAdminActions } from '../useAdminActions.ts'
 import { useAdmin } from '../adminContext.ts'
 import { TODAY } from '../data.ts'
 import { enrichDossier, filterDossiers, statusClasses } from '../queries.ts'
@@ -43,7 +43,7 @@ function stepsOf(d: EnrichedDossier) {
 }
 
 function Detail({ d, isMobile, onBack }: { d: EnrichedDossier; isMobile: boolean; onBack: () => void }) {
-  const { apply } = useAdmin()
+  const actions = useAdminActions()
   // Remise à zéro de l'état local quand on change de dossier ou de statut.
   const [mode, setMode] = useState<'idle' | 'schedule' | 'reject'>('idle')
   const [date, setDate] = useState('')
@@ -89,7 +89,7 @@ function Detail({ d, isMobile, onBack }: { d: EnrichedDossier; isMobile: boolean
           type="button"
           onClick={() => {
             if (!motif.trim()) return setMotifError(true)
-            apply((s) => rejectDossier(s, d.id, motif.trim()))
+            void actions.rejectDossier(d.id, motif.trim())
             reset()
           }}
           className="h-12 cursor-pointer rounded-xl border-0 bg-navy px-5 font-[inherit] text-[15px] font-semibold text-white"
@@ -144,7 +144,7 @@ function Detail({ d, isMobile, onBack }: { d: EnrichedDossier; isMobile: boolean
             <span className="text-[15px]/[22px] text-muted">
               Le Comité a jusqu'au {fmt(addDays(d.depot, 7), { weekday: 'long', day: 'numeric', month: 'long' })} pour étudier le dossier ({d.dueLabel}).
             </span>
-            <button type="button" onClick={() => apply((s) => startStudy(s, d.id))} className={`${primaryButton} h-12 self-start px-5`}>
+            <button type="button" onClick={() => void actions.startStudy(d.id)} className={`${primaryButton} h-12 self-start px-5`}>
               Démarrer l'étude
             </button>
           </div>
@@ -196,7 +196,7 @@ function Detail({ d, isMobile, onBack }: { d: EnrichedDossier; isMobile: boolean
                     type="button"
                     onClick={() => {
                       if (!date) return setDateError(true)
-                      apply((s) => scheduleDefense(s, d.id, date, time))
+                      void actions.scheduleDefense(d.id, date, time)
                       reset()
                     }}
                     className={`${primaryButton} h-12 px-5`}
@@ -227,7 +227,7 @@ function Detail({ d, isMobile, onBack }: { d: EnrichedDossier; isMobile: boolean
               rejectForm
             ) : (
               <div className="flex flex-wrap gap-3">
-                <button type="button" onClick={() => apply((s) => approveDossier(s, d.id))} className={`${primaryButton} h-12 px-5`}>
+                <button type="button" onClick={() => void actions.approveDossier(d.id)} className={`${primaryButton} h-12 px-5`}>
                   <Icon name="task_alt" size={20} />
                   Approuver le club
                 </button>

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import CoverImage from '../../../components/CoverImage.tsx'
 import Icon from '../../../components/Icon.tsx'
 import type { GalleryPhoto } from '../types.ts'
 
@@ -64,8 +65,9 @@ export default function Lightbox({ photos, index, onChange, onClose }: Props) {
       <div
         onClick={stop}
         style={{ width, height: width / photo.ratio }}
-        className="flex items-end rounded-xl bg-[repeating-linear-gradient(135deg,#1c3657_0_12px,#17304f_12px_24px)] p-4 font-mono text-xs text-steel"
+        className="relative flex items-end rounded-xl bg-[repeating-linear-gradient(135deg,#1c3657_0_12px,#17304f_12px_24px)] p-4 font-mono text-xs text-steel"
       >
+        <CoverImage src={photo.key} alt={photo.label} />
         photo haute définition
       </div>
       <p onClick={stop} className="m-0 text-center text-[15px]/[22px] font-medium text-white">

@@ -1,3 +1,4 @@
+import CoverImage from '../../../components/CoverImage.tsx'
 import Icon from '../../../components/Icon.tsx'
 import type { Member } from '../types.ts'
 
@@ -16,7 +17,7 @@ export default function CommitteeSection({ members }: { members: Member[] }) {
             <h2 className="m-0 text-[28px]/9 font-semibold tracking-[-.01em]">Qui gère les clubs ?</h2>
             <p className="m-0 text-pretty text-base/6 text-muted">
               Le Comité de Gestion des Clubs est composé d'étudiants élus. Il valide les nouveaux projets de club, fixe
-              le calendrier du club du mois et organise le challenge inter-clubs.
+              le calendrier du club du mois et accompagne les responsables de club.
             </p>
           </div>
           <ul className="m-0 grid list-none grid-cols-3 gap-3 p-0">
@@ -32,7 +33,8 @@ export default function CommitteeSection({ members }: { members: Member[] }) {
         <div className="mt-10 grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-x-4 gap-y-6">
           {members.map((m) => (
             <div key={m.name} className="flex flex-col gap-3">
-              <div className="ph-light flex aspect-square items-end rounded-xl p-2.5 font-mono text-[11px] text-muted">
+              <div className="ph-light relative flex aspect-square items-end rounded-xl p-2.5 font-mono text-[11px] text-muted">
+                <CoverImage src={m.photoKey} alt={m.name} />
                 portrait
               </div>
               <div className="flex flex-col gap-0.5">

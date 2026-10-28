@@ -1,5 +1,7 @@
 import { Link } from 'react-router'
+import CoverImage from '../../../components/CoverImage.tsx'
 import Icon from '../../../components/Icon.tsx'
+import type { HeroPhotos } from '../../site/types.ts'
 
 const photos = [
   { label: 'match de basket 3x3', className: 'col-[1/3] row-[1/3] p-3' },
@@ -9,7 +11,7 @@ const photos = [
   { label: 'concert du club Musique', className: 'col-[2/4] row-3' },
 ]
 
-export default function Hero() {
+export default function Hero({ photos: keys = [] }: { photos?: HeroPhotos }) {
   return (
     <section className="bg-navy pb-[clamp(96px,10vw,136px)] pt-[clamp(40px,7vw,88px)] text-white">
       <div className="wrap grid grid-cols-[repeat(auto-fit,minmax(min(100%,440px),1fr))] items-center gap-[clamp(32px,5vw,72px)]">
@@ -46,12 +48,13 @@ export default function Hero() {
           aria-hidden="true"
           className="grid grid-cols-3 grid-rows-[repeat(3,clamp(80px,10vw,140px))] gap-3"
         >
-          {photos.map((p) => (
+          {photos.map((p, i) => (
             <div
               key={p.label}
-              className={`ph-dark flex items-end rounded-xl border border-white/10 p-2.5 font-mono text-[11px] text-steel ${p.className}`}
+              className={`ph-dark relative flex items-end rounded-xl border border-white/10 p-2.5 font-mono text-[11px] text-steel ${p.className}`}
             >
-              photo · {p.label}
+              <CoverImage src={keys[i]} />
+              {!keys[i] && <>photo · {p.label}</>}
             </div>
           ))}
         </div>
