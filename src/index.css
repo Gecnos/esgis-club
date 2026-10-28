@@ -24,6 +24,12 @@ body {
   font-family: var(--font-sans);
 }
 
+@media (max-width: 767px) {
+  body.has-join-bar {
+    padding-bottom: 84px;
+  }
+}
+
 @layer components {
   .wrap {
     max-width: 1248px;

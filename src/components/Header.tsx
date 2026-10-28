@@ -5,7 +5,8 @@ import Logo from './Logo.tsx'
 import { joinLink, navLinks } from './nav.ts'
 
 function useActiveKey() {
-  const { hash } = useLocation()
+  const { pathname, hash } = useLocation()
+  if (pathname.startsWith('/clubs/')) return 'clubs'
   if (!hash) return 'accueil'
   return navLinks.find((l) => l.to.endsWith(hash))?.key ?? 'accueil'
 }
