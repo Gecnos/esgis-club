@@ -1,9 +1,13 @@
+import { useMocks } from '../../lib/env.ts'
 import type { ClubDraft, Dossier, LogEntry, Photo, Planning } from './types.ts'
 
-// Données de démonstration, à remplacer par Supabase.
+// Données de démonstration (mode sans Supabase).
 
-/** Date « du jour » de la démo : les échéances des dossiers sont calculées à partir d'elle. */
-export const TODAY = new Date(2026, 9, 22)
+/**
+ * Date « du jour ». En démo, elle est figée au 22 octobre 2026 pour que les échéances des dossiers
+ * de démonstration restent cohérentes ; avec Supabase, c'est la vraie date.
+ */
+export const TODAY = useMocks ? new Date(2026, 9, 22) : new Date()
 
 export const CLUB_OPTIONS: [slug: string, name: string][] = [
   ['otaku', 'Otaku'], ['danse', 'Danse'], ['musique', 'Musique'], ['football', 'Football'],
@@ -25,12 +29,12 @@ export const initialClub: ClubDraft = {
   ],
   wa: '+229 01 96 11 22 33',
   socials: { instagram: '@robotique.esgis', facebook: 'Club Robotique ESGIS', tiktok: '', linkedin: '' },
-  logoUrl: null,
+  logoKey: null,
   bureau: [
-    { id: 1, role: 'Président', name: 'Wilfried Ahouandjinou', filiere: 'Génie électrique · L3', photo: true, url: null, fixed: true },
-    { id: 2, role: 'Secrétaire', name: 'Nadège Gbaguidi', filiere: 'Génie logiciel · L2', photo: true, url: null, fixed: true },
-    { id: 3, role: 'Trésorier', name: 'Rachidi Alao', filiere: 'Réseaux & Télécoms · L2', photo: true, url: null, fixed: true },
-    { id: 4, role: 'Communication', name: 'Estelle Kiki', filiere: 'Marketing digital · L1', photo: false, url: null, fixed: true },
+    { id: 1, role: 'Président', name: 'Wilfried Ahouandjinou', filiere: 'Génie électrique · L3', photoKey: 'demo:portrait', fixed: true },
+    { id: 2, role: 'Secrétaire', name: 'Nadège Gbaguidi', filiere: 'Génie logiciel · L2', photoKey: 'demo:portrait', fixed: true },
+    { id: 3, role: 'Trésorier', name: 'Rachidi Alao', filiere: 'Réseaux & Télécoms · L2', photoKey: 'demo:portrait', fixed: true },
+    { id: 4, role: 'Communication', name: 'Estelle Kiki', filiere: 'Marketing digital · L1', photoKey: null, fixed: true },
   ],
   phare: {
     titre: 'Robots en piste : la grande démo',
@@ -43,7 +47,7 @@ export const initialClub: ClubDraft = {
       { h: '13:30', l: 'Atelier Arduino, groupes de 10' },
       { h: '16:00', l: 'Course finale et remise des prix' },
     ],
-    visuelUrl: null,
+    visuelKey: null,
   },
 }
 
@@ -51,7 +55,7 @@ export const initialPhotos: Photo[] = [
   'Atelier soudure, septembre 2026', 'Course du robot suiveur', 'Équipe finaliste 2025',
   'Prototype du bras robotique', 'Séance du vendredi', 'Visite du fablab', 'Remise des prix',
   'Circuit Arduino', 'Démo dans le hall', 'Le club au complet',
-].map((label, i) => ({ id: i + 1, label, url: null }))
+].map((label, i) => ({ id: i + 1, label, key: null, ratio: 4 / 3 }))
 
 export const initialDossiers: Dossier[] = [
   {

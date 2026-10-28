@@ -17,7 +17,7 @@ const sectionTitle = (n: number, label: string) => (
   </div>
 )
 
-const toUploaded = (file: File): UploadedFile => ({ name: file.name, size: formatFileSize(file.size) })
+const toUploaded = (file: File): UploadedFile => ({ name: file.name, size: formatFileSize(file.size), file })
 
 const smallInput =
   'w-full rounded-[10px] border border-[#c9d1dd] bg-white font-[inherit] text-navy outline-none focus:border-navy'

@@ -1,4 +1,4 @@
-export type UploadedFile = { name: string; size: string }
+export type UploadedFile = { name: string; size: string; /** Fichier à envoyer vers R2 à la soumission. */ file?: File }
 
 export type CalendarRow = { date: string; activity: string }
 

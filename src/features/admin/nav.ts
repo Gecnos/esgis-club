@@ -17,20 +17,12 @@ export const adminNav: Record<Role, AdminNavItem[]> = {
   ],
 }
 
-export const adminSpaces: { role: Role; to: string; label: string; sub: string }[] = [
-  { role: 'club', to: '/admin/club', label: 'Club Robotique', sub: 'Responsable de club' },
-  { role: 'comite', to: '/admin/comite', label: 'Comité des Clubs', sub: 'Administrateur' },
-]
-
-export const adminUsers: Record<Role, { name: string; role: string; initials: string }> = {
-  club: { name: 'Wilfried Ahouandjinou', role: 'Président · Robotique', initials: 'WA' },
-  comite: { name: 'Grâce Dossou', role: 'Secrétaire Générale', initials: 'GD' },
-}
+export const adminHome: Record<Role, string> = { club: '/admin/club', comite: '/admin/comite' }
 
 /** Titre et sous-titre de chaque vue, indexés par le dernier segment de l'URL. */
 export const adminHeads: Record<Role, Record<string, [title: string, subtitle: string]>> = {
   club: {
-    tableau: ['Tableau de bord', "Bonjour Wilfried, voici l'état de la page de ton club."],
+    tableau: ['Tableau de bord', "Voici l'état de la page de ton club."],
     fiche: ['Fiche du club', "Ces informations s'affichent sur la page publique du club."],
     galerie: ['Galerie photo', "Les photos sont publiées dès l'ajout. Tu peux annuler une suppression pendant quelques secondes."],
     bureau: ['Bureau du club', 'Les membres du bureau apparaissent sur la page du club avec leur photo et leur poste.'],

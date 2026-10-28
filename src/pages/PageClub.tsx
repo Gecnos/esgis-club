@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router'
+import { Link, useLoaderData } from 'react-router'
 import ClubAbout from '../features/clubs/components/ClubAbout.tsx'
 import ClubActivities from '../features/clubs/components/ClubActivities.tsx'
 import ClubBureau from '../features/clubs/components/ClubBureau.tsx'
@@ -9,13 +9,11 @@ import FeaturedActivitySection from '../features/clubs/components/FeaturedActivi
 import JoinBar from '../features/clubs/components/JoinBar.tsx'
 import PhotoLibrary from '../features/clubs/components/PhotoLibrary.tsx'
 import SimilarClubs from '../features/clubs/components/SimilarClubs.tsx'
-import { getClub, getSimilarClubs } from '../features/clubs/queries.ts'
 import { whatsappLink } from '../features/clubs/whatsapp.ts'
-import { getClubOfMonth } from '../features/planning/queries.ts'
+import type { clubLoader } from './loaders.ts'
 
 export default function PageClub() {
-  const { slug = '' } = useParams()
-  const club = getClub(slug)
+  const { club, similar, clubOfMonthSlug } = useLoaderData<Awaited<ReturnType<typeof clubLoader>>>()
 
   if (!club) {
     return (
@@ -31,7 +29,7 @@ export default function PageClub() {
 
   return (
     <>
-      <ClubHero club={club} isClubOfMonth={club.slug === getClubOfMonth().clubSlug} />
+      <ClubHero club={club} isClubOfMonth={club.slug === clubOfMonthSlug} />
       <div className="wrap flex flex-col gap-[clamp(56px,7vw,88px)] pb-[clamp(64px,8vw,104px)] pt-[clamp(48px,6vw,72px)]">
         <ClubAbout club={club} />
         <ClubObjectives objectives={club.objectives} />
@@ -40,7 +38,7 @@ export default function PageClub() {
         <ClubBureau bureau={club.bureau} />
         <PhotoLibrary key={club.slug} clubName={club.name} photos={club.photos} />
         <ClubSocials slug={club.slug} name={club.name} />
-        <SimilarClubs clubs={getSimilarClubs(club.slug)} />
+        <SimilarClubs clubs={similar} />
       </div>
       <JoinBar clubName={club.name} href={whatsappLink(club)} />
     </>

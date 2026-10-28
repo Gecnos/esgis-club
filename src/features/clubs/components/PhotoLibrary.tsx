@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import CoverImage from '../../../components/CoverImage.tsx'
 import Icon from '../../../components/Icon.tsx'
 import type { GalleryPhoto } from '../types.ts'
 import Lightbox from './Lightbox.tsx'
@@ -28,8 +29,9 @@ export default function PhotoLibrary({ clubName, photos }: Props) {
               onClick={() => setOpen(i)}
               aria-label={`Agrandir : ${p.label}`}
               style={{ aspectRatio: p.ratio }}
-              className="mb-4 flex w-full cursor-zoom-in break-inside-avoid items-end rounded-xl border-0 bg-[repeating-linear-gradient(135deg,#e1e6ee_0_10px,#eaeef4_10px_20px)] p-2.5 text-left font-mono text-[11px] text-muted hover:bg-[repeating-linear-gradient(135deg,#d6dce6_0_10px,#e1e6ee_10px_20px)]"
+              className="relative mb-4 flex w-full cursor-zoom-in break-inside-avoid items-end overflow-hidden rounded-xl border-0 bg-[repeating-linear-gradient(135deg,#e1e6ee_0_10px,#eaeef4_10px_20px)] p-2.5 text-left font-mono text-[11px] text-muted hover:bg-[repeating-linear-gradient(135deg,#d6dce6_0_10px,#e1e6ee_10px_20px)]"
             >
+              <CoverImage src={p.key} alt={p.label} />
               {p.label}
             </button>
           ))}

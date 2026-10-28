@@ -1,3 +1,4 @@
+import CoverImage from '../../../components/CoverImage.tsx'
 import Icon from '../../../components/Icon.tsx'
 import type { Member } from '../types.ts'
 
@@ -32,7 +33,8 @@ export default function CommitteeSection({ members }: { members: Member[] }) {
         <div className="mt-10 grid grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))] gap-x-4 gap-y-6">
           {members.map((m) => (
             <div key={m.name} className="flex flex-col gap-3">
-              <div className="ph-light flex aspect-square items-end rounded-xl p-2.5 font-mono text-[11px] text-muted">
+              <div className="ph-light relative flex aspect-square items-end rounded-xl p-2.5 font-mono text-[11px] text-muted">
+                <CoverImage src={m.photoKey} alt={m.name} />
                 portrait
               </div>
               <div className="flex flex-col gap-0.5">

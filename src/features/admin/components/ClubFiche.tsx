@@ -1,8 +1,9 @@
 import { Link } from 'react-router'
 import Icon from '../../../components/Icon.tsx'
-import { editDraft } from '../actions.ts'
+import { imageUrl } from '../../../lib/storage.ts'
 import { useAdmin } from '../adminContext.ts'
 import type { Socials } from '../types.ts'
+import { useAdminActions } from '../useAdminActions.ts'
 import { Card, ErrorNote, Field, FileButton, TextAreaInput, TextInput, inputClass } from './ui.tsx'
 
 const socialFields: [keyof Socials, string, string][] = [
@@ -15,9 +16,12 @@ const socialFields: [keyof Socials, string, string][] = [
 const lockedField = 'flex h-12 items-center justify-between gap-2 rounded-xl bg-soft px-3.5 text-base text-muted'
 
 export default function ClubFiche() {
-  const { state, apply } = useAdmin()
+  const { state } = useAdmin()
+  const actions = useAdminActions()
   const d = state.draft
-  const set = (edit: (draft: typeof d) => void) => apply((s) => editDraft(s, edit))
+  const set = (edit: (draft: typeof d) => void) => actions.edit(edit)
+  const logo = imageUrl(d.logoKey)
+  const clubInitials = state.club.name.replace(/&/g, '').split(/\s+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase()
 
   const digits = d.wa.replace(/\D/g, '')
   const local = digits.startsWith('229') ? digits.slice(3) : digits
@@ -32,13 +36,13 @@ export default function ClubFiche() {
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,220px),1fr))] gap-5">
           <Field label="Nom du club">
             <div className={lockedField}>
-              Club Robotique
+              Club {state.club.name}
               <Icon name="lock" size={18} />
             </div>
           </Field>
           <Field label="Catégorie">
             <div className={lockedField}>
-              Tech
+              {state.club.category}
               <Icon name="lock" size={18} />
             </div>
           </Field>
@@ -50,16 +54,16 @@ export default function ClubFiche() {
 
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-5">
           <div className="flex items-center gap-4">
-            {d.logoUrl ? (
+            {logo ? (
               <span
                 role="img"
                 aria-label="Logo du club"
                 className="size-[88px] flex-none rounded-xl bg-cover bg-center"
-                style={{ backgroundImage: `url(${d.logoUrl})` }}
+                style={{ backgroundImage: `url(${logo})` }}
               />
             ) : (
               <span className="flex size-[88px] flex-none items-center justify-center rounded-xl bg-navy text-[26px] font-bold text-white">
-                RO
+                {clubInitials}
               </span>
             )}
             <div className="flex flex-col gap-1.5">
@@ -67,7 +71,7 @@ export default function ClubFiche() {
               <span className="text-[13px]/[18px] font-medium text-muted">Carré, PNG ou JPG, 512 px conseillé</span>
               <FileButton
                 accept="image/*"
-                onFiles={([file]) => file && set((x) => { x.logoUrl = URL.createObjectURL(file) })}
+                onFiles={([file]) => file && void actions.uploadLogo(file)}
                 className="flex h-10 items-center gap-1.5 self-start rounded-[10px] border-[1.5px] border-[#c9d1dd] px-3 text-sm font-semibold hover:border-navy"
               >
                 <Icon name="cloud_upload" size={18} />
@@ -152,7 +156,7 @@ export default function ClubFiche() {
             <p className="m-0 text-[13px]/[18px] font-medium text-muted">
               Le bouton « Rejoindre le club » ouvre :{' '}
               <a
-                href={`https://wa.me/${waNumber}?text=${encodeURIComponent('Bonjour, je souhaite rejoindre le club Robotique.')}`}
+                href={`https://wa.me/${waNumber}?text=${encodeURIComponent('Bonjour, je souhaite rejoindre le club ' + state.club.name + '.')}`}
                 target="_blank"
                 rel="noopener"
                 className="font-semibold text-navy"

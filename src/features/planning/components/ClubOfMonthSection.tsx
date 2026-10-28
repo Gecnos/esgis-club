@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import CoverImage from '../../../components/CoverImage.tsx'
 import Icon from '../../../components/Icon.tsx'
 import { capitalize } from '../../../lib/text.ts'
 import { nextMonthlyActivity } from '../dates.ts'
@@ -51,6 +52,7 @@ export default function ClubOfMonthSection({ club }: { club: ClubOfMonth }) {
 
         <article className="mt-8 grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] overflow-hidden rounded-xl bg-navy text-white shadow-[0_16px_40px_rgb(11_31_58/0.18)]">
           <div className="ph-navy relative flex min-h-[clamp(220px,30vw,440px)] items-end p-4 font-mono text-xs text-steel">
+            <CoverImage src={club.photoKey} alt={club.clubName} />
             photo · {club.photoLabel}
             <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 font-sans text-[13px]/[18px] font-medium text-white">
               <Icon name="workspace_premium" size={16} />

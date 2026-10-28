@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import CoverImage from '../../../components/CoverImage.tsx'
 import Icon from '../../../components/Icon.tsx'
 import type { FeaturedActivity } from '../types.ts'
 
@@ -37,7 +38,8 @@ export default function FeaturedActivitySection({ clubName, featured }: Props) {
               ))}
             </ol>
           </div>
-          <div className="ph-navy flex min-h-[clamp(220px,28vw,420px)] items-end p-4 font-mono text-xs text-steel">
+          <div className="ph-navy relative flex min-h-[clamp(220px,28vw,420px)] items-end p-4 font-mono text-xs text-steel">
+            <CoverImage src={featured.visualKey} alt={featured.title} />
             {featured.photo}
           </div>
         </article>

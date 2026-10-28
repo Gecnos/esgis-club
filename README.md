@@ -29,6 +29,10 @@ npm run lint      # oxlint
 
 Les variables d'environnement (clés Supabase, accès R2) vont dans un fichier `.env.local` non versionné ; un fichier `.env.example` documente les noms attendus.
 
+### Mode démo et Supabase
+
+Tant que `VITE_SUPABASE_URL` et `VITE_SUPABASE_ANON_KEY` sont vides, le site utilise des données de démonstration et, en développement, deux comptes de test affichés sur `/connexion`. Pour brancher Supabase et R2 : voir [`docs/supabase.md`](docs/supabase.md) (schéma SQL dans `supabase/`).
+
 ## Architecture
 
 ```
