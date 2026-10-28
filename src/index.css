@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --color-night-950: #0a1a3a;
+  --color-night-900: #0d2149;
+  --color-accent: #dc2640;
+}
+
+body {
+  margin: 0;
+  background: var(--color-night-950);
+  color: white;
+  font-family: var(--font-sans);
+}
