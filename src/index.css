@@ -2,14 +2,50 @@
 
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
-  --color-night-950: #0a1a3a;
-  --color-night-900: #0d2149;
-  --color-accent: #dc2640;
+  --color-navy: #0b1f3a;
+  --color-accent: #d62839;
+  --color-accent-dark: #b81f2f;
+  --color-muted: #5a6478;
+  --color-soft: #f4f6fa;
+  --color-line: #e3e8ef;
+  --color-mist: #c9d2e0;
+  --color-steel: #a9b6cb;
+  --color-outline: #b8c1cf;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  background: var(--color-night-950);
-  color: white;
+  background: #fff;
+  color: var(--color-navy);
   font-family: var(--font-sans);
+}
+
+@media (max-width: 767px) {
+  body.has-join-bar {
+    padding-bottom: 84px;
+  }
+}
+
+@layer components {
+  .wrap {
+    max-width: 1248px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 4vw, 24px);
+  }
+
+  .ph-dark {
+    background: repeating-linear-gradient(135deg, rgb(255 255 255 / 0.07) 0 10px, rgb(255 255 255 / 0.03) 10px 20px);
+  }
+
+  .ph-light {
+    background: repeating-linear-gradient(135deg, #e6eaf1 0 10px, #eef1f6 10px 20px);
+  }
+
+  .ph-navy {
+    background: repeating-linear-gradient(135deg, #16304f 0 10px, #122a48 10px 20px);
+  }
 }

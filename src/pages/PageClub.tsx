@@ -1,0 +1,48 @@
+import { Link, useParams } from 'react-router'
+import ClubAbout from '../features/clubs/components/ClubAbout.tsx'
+import ClubActivities from '../features/clubs/components/ClubActivities.tsx'
+import ClubBureau from '../features/clubs/components/ClubBureau.tsx'
+import ClubHero from '../features/clubs/components/ClubHero.tsx'
+import ClubObjectives from '../features/clubs/components/ClubObjectives.tsx'
+import ClubSocials from '../features/clubs/components/ClubSocials.tsx'
+import FeaturedActivitySection from '../features/clubs/components/FeaturedActivitySection.tsx'
+import JoinBar from '../features/clubs/components/JoinBar.tsx'
+import PhotoLibrary from '../features/clubs/components/PhotoLibrary.tsx'
+import SimilarClubs from '../features/clubs/components/SimilarClubs.tsx'
+import { getClub, getSimilarClubs } from '../features/clubs/queries.ts'
+import { whatsappLink } from '../features/clubs/whatsapp.ts'
+import { getClubOfMonth } from '../features/planning/queries.ts'
+
+export default function PageClub() {
+  const { slug = '' } = useParams()
+  const club = getClub(slug)
+
+  if (!club) {
+    return (
+      <div className="wrap flex flex-col items-start gap-4 py-24">
+        <h1 className="m-0 text-[clamp(30px,calc(2.2vw+18px),40px)] font-bold">Club introuvable</h1>
+        <p className="m-0 text-base/6 text-muted">Ce club n'existe pas ou n'est plus actif.</p>
+        <Link to="/#clubs" className="font-semibold text-navy">
+          Voir tous les clubs
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <ClubHero club={club} isClubOfMonth={club.slug === getClubOfMonth().clubSlug} />
+      <div className="wrap flex flex-col gap-[clamp(56px,7vw,88px)] pb-[clamp(64px,8vw,104px)] pt-[clamp(48px,6vw,72px)]">
+        <ClubAbout club={club} />
+        <ClubObjectives objectives={club.objectives} />
+        <ClubActivities activities={club.activities} />
+        <FeaturedActivitySection clubName={club.name} featured={club.featured} />
+        <ClubBureau bureau={club.bureau} />
+        <PhotoLibrary key={club.slug} clubName={club.name} photos={club.photos} />
+        <ClubSocials slug={club.slug} name={club.name} />
+        <SimilarClubs clubs={getSimilarClubs(club.slug)} />
+      </div>
+      <JoinBar clubName={club.name} href={whatsappLink(club)} />
+    </>
+  )
+}
