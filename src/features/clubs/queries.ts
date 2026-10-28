@@ -49,7 +49,7 @@ const toClub = (r: ClubRow): Club => ({
 const hour = (t: string) => t.slice(0, 5).replace(':', 'h')
 
 export async function getClubs(): Promise<Club[]> {
-  if (!supabase) return clubs
+  if (!supabase) return [...clubs]
   const { data, error } = await supabase
     .from('clubs')
     .select('slug, name, category, description, members, founded, photo_key')

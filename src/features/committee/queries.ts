@@ -4,7 +4,7 @@ import type { Member } from './types.ts'
 type MemberRow = { role: string; name: string; filiere: string; photo_key: string | null }
 
 // Données de démonstration (mode sans Supabase).
-const members: Member[] = [
+export const mockMembers: Member[] = [
   { role: 'Président', name: 'Kévin Agossou', filiere: 'Génie logiciel · M1' },
   { role: 'Vice-Présidente', name: 'Mariam Bello', filiere: 'Gestion · L3' },
   { role: 'Secrétaire Générale', name: 'Grâce Dossou', filiere: 'Droit des affaires · L3' },
@@ -14,7 +14,7 @@ const members: Member[] = [
 ]
 
 export async function getCommittee(): Promise<Member[]> {
-  if (!supabase) return members
+  if (!supabase) return [...mockMembers]
   const { data, error } = await supabase.from('committee_members').select('role, name, filiere, photo_key').order('position')
   if (error) throw error
   return (data as MemberRow[]).map((m) => ({ role: m.role, name: m.name, filiere: m.filiere, photoKey: m.photo_key }))

@@ -26,6 +26,11 @@ export type FeaturedDraft = {
   visuelKey: string | null
 }
 
+/** Exemple d'activité du club, affiché dans « Exemples d'activités » de sa page. */
+export type ActivityExample = { id: number; type: string; title: string; text: string; photoKey: string | null }
+
+export const ACTIVITY_TYPES = ['Atelier', 'Événement', 'Compétition', 'Entraînement', 'Sortie', 'Autre'] as const
+
 export type Socials = { instagram: string; facebook: string; tiktok: string; linkedin: string }
 
 export type ClubDraft = {
@@ -37,6 +42,7 @@ export type ClubDraft = {
   socials: Socials
   logoKey: string | null
   bureau: BureauSlot[]
+  activities: ActivityExample[]
   phare: FeaturedDraft
 }
 
@@ -75,6 +81,9 @@ export type ToastState = {
 /** Clé `année-mois` (mois de 0 à 11) → slug du club, ou `__vac` pour les vacances. */
 export type Planning = Record<string, string>
 
+/** Clé `année-mois` → jour de l'activité (`YYYY-MM-DD`). Absent : dernier vendredi du mois. */
+export type PlanningDays = Record<string, string>
+
 export type ManagedClub = { slug: string; name: string; category: Category }
 
 export type AdminState = {
@@ -86,11 +95,12 @@ export type AdminState = {
   cover: number
   dossiers: Dossier[]
   planning: Planning
+  planningDays: PlanningDays
   /** Clubs programmables dans le planning : [slug, nom]. */
   clubOptions: [slug: string, name: string][]
   log: LogEntry[]
   toast: ToastState | null
 }
 
-export type ClubView = 'tableau' | 'fiche' | 'galerie' | 'bureau' | 'activite'
-export type ComiteView = 'tableau' | 'dossiers' | 'planning'
+export type ClubView = 'tableau' | 'fiche' | 'galerie' | 'bureau' | 'exemples' | 'activite'
+export type ComiteView = 'tableau' | 'dossiers' | 'planning' | 'clubs' | 'site' | 'comptes'

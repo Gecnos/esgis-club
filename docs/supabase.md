@@ -41,6 +41,10 @@ Dans **SQL Editor**, exécuter dans l'ordre :
 
 Vérifier ensuite dans **Authentication → Policies** que chaque table affiche « RLS enabled ».
 
+**Projet déjà créé avant une évolution ?** `schema.sql` ne s'applique pas tout seul : chaque évolution de la base a un fichier dans `supabase/migrations/`, à exécuter une fois dans le SQL Editor (elles sont rejouables sans risque). Dernière en date : `20261029_clubs_photos_planning.sql` (jour d'activité du club du mois, photos du site, droits sur la vignette d'un club). Sans elle, l'espace Comité ne se charge plus.
+
+**Projet déjà créé avant une évolution ?** `schema.sql` ne s'applique pas tout seul : chaque évolution de la base a un fichier dans `supabase/migrations/`, à exécuter une fois dans le SQL Editor (elles sont rejouables sans risque). Dernière en date : `20261029_clubs_photos_planning.sql` (jour d'activité du club du mois, photos du site, droits sur la vignette d'un club). Sans elle, l'espace Comité ne se charge plus.
+
 > Le projet a d'abord eu un classement « challenge inter-clubs », retiré depuis. Si ta base a été créée avant ce retrait, supprime la table devenue inutile : `drop table if exists public.challenge_scores;`
 
 ## 3. Les comptes
@@ -128,7 +132,7 @@ npx supabase functions deploy admin-users
 Vérifier avec `npx supabase secrets list` (n'affiche que les noms) et dans **Edge Functions** du dashboard (les deux fonctions doivent être « Active »).
 
 Règles appliquées :
-- `r2-presign` : images (JPEG, PNG, WebP) de 10 Mo maximum pour les clubs, réservées au responsable du club concerné ou au Comité ; documents (PDF, Word, Excel) de 20 Mo maximum pour les dossiers, ouverts à tous (formulaire public).
+- `r2-presign` : images (JPEG, PNG, WebP) de 10 Mo maximum pour les clubs, réservées au responsable du club concerné ou au Comité (les photos du site, `site/…` et `comite/…`, au Comité seul) ; documents (PDF, Word, Excel) de 20 Mo maximum pour les dossiers, ouverts à tous (formulaire public).
 - `admin-users` : refuse quiconque n'est pas membre du Comité ; un membre ne peut pas supprimer son propre compte.
 
 ## 6. Vérifier

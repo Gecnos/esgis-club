@@ -3,7 +3,7 @@ import { capitalize } from '../../../lib/text.ts'
 import { useMediaQuery } from '../../../lib/useMediaQuery.ts'
 import { useAdmin } from '../adminContext.ts'
 import { TODAY } from '../data.ts'
-import { assignedClubs, clubName, MONTHS, SEASON_LABEL } from '../queries.ts'
+import { activityDay, assignedClubs, clubName, MONTHS, SEASON_LABEL, toIsoDay } from '../queries.ts'
 import { useAdminActions } from '../useAdminActions.ts'
 import { cardClass } from './ui.tsx'
 
@@ -26,9 +26,11 @@ export default function ComitePlanning() {
         {MONTHS.map((m) => {
           const value = state.planning[m.key] ?? ''
           const vacation = value === '__vac'
-          const past = diffDays(TODAY, m.fri) < 0
+          const day = activityDay(state.planningDays, m)
+          const past = diffDays(TODAY, day) < 0
           const current = m.y === TODAY.getFullYear() && m.m === TODAY.getMonth()
-          const locked = past || current || vacation
+          // Le mois en cours reste modifiable (le Comité peut déplacer ou changer l'activité).
+          const locked = past || vacation
           const status = vacation ? 'Vacances' : past ? 'Passé' : current ? 'En cours' : value ? 'Programmé' : 'À programmer'
           const monthLabel = capitalize(fmt(m.fri, { month: 'long', year: 'numeric' }))
           const statusClass = current
@@ -47,7 +49,7 @@ export default function ComitePlanning() {
               <span className="flex flex-col">
                 <span className="text-base/6 font-semibold">{monthLabel}</span>
                 <span className="text-[13px]/[18px] font-medium text-muted">
-                  {capitalize(fmt(m.fri, { weekday: 'long', day: 'numeric', month: 'long' }))}
+                  {capitalize(fmt(day, { weekday: 'long', day: 'numeric', month: 'long' }))}
                 </span>
               </span>
 
@@ -79,6 +81,19 @@ export default function ComitePlanning() {
                       )
                     })}
                   </select>
+                )}
+                {!locked && value && (
+                <label className="mt-2 flex items-center gap-2 text-[13px]/[18px] font-medium text-muted">
+                  Jour de l'activité
+                  <input
+                    type="date"
+                    value={toIsoDay(day)}
+                    min={toIsoDay(new Date(m.y, m.m, 1))}
+                    max={toIsoDay(new Date(m.y, m.m + 1, 0))}
+                    onChange={(e) => e.target.value && void actions.setDay(m.key, e.target.value)}
+                    className="h-10 rounded-[10px] border-[1.5px] border-[#8a95a8] bg-white px-2.5 font-[inherit] text-[15px] text-navy outline-none focus:border-navy"
+                  />
+                </label>
                 )}
               </div>
 

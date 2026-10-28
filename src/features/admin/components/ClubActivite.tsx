@@ -16,7 +16,7 @@ export default function ClubActivite() {
   const actions = useAdminActions()
   const isMobile = useMediaQuery('(max-width: 899px)')
   const p = state.draft.phare
-  const month = getClubMonth(state.planning, state.club.slug, state.saved.phare.titre)
+  const month = getClubMonth(state.planning, state.planningDays, state.club.slug, state.saved.phare.titre)
   const set = (edit: (phare: typeof p) => void) => actions.edit((d) => edit(d.phare))
   const visual = imageUrl(p.visuelKey)
 

@@ -46,7 +46,7 @@ export default function ClubOfMonthSection({ club }: { club: ClubOfMonth }) {
         <div className="flex max-w-[640px] flex-col gap-3">
           <h2 className="m-0 text-[28px]/9 font-semibold tracking-[-.01em]">Club du mois</h2>
           <p className="m-0 text-base/6 text-muted">
-            Chaque mois, un club organise l'activité ouverte à tous du dernier vendredi.
+            Chaque mois, un club organise une activité ouverte à tous.
           </p>
         </div>
 

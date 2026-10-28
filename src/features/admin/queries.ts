@@ -3,9 +3,12 @@ import { supabase } from '../../lib/supabase.ts'
 import { capitalize } from '../../lib/text.ts'
 import type { AuthUser } from '../auth/types.ts'
 import type { Category } from '../clubs/types.ts'
-import { CLUB_OPTIONS, TODAY, initialClub, initialDossiers, initialLog, initialPhotos, initialPlanning } from './data.ts'
+import {
+  CLUB_OPTIONS, TODAY, initialClub, initialDossiers, initialLog, initialPhotos, initialPlanning, initialPlanningDays,
+} from './data.ts'
 import type {
-  AdminState, BureauSlot, ClubDraft, ClubView, Dossier, DossierStatus, LogEntry, ManagedClub, Photo, Planning,
+  ActivityExample, AdminState, BureauSlot, ClubDraft, ClubView, Dossier, DossierStatus, LogEntry, ManagedClub, Photo, Planning,
+  PlanningDays,
 } from './types.ts'
 
 // ---------------------------------------------------------------------------------------------
@@ -21,6 +24,7 @@ const emptyDraft: ClubDraft = {
   socials: { instagram: '', facebook: '', tiktok: '', linkedin: '' },
   logoKey: null,
   bureau: [],
+  activities: [],
   phare: { titre: '', debut: '12:00', fin: '17:00', lieu: '', desc: '', programme: [], visuelKey: null },
 }
 
@@ -33,6 +37,7 @@ function mockState(): AdminState {
     cover: 1,
     dossiers: initialDossiers,
     planning: { ...initialPlanning },
+    planningDays: { ...initialPlanningDays },
     clubOptions: CLUB_OPTIONS,
     log: initialLog,
     toast: null,
@@ -54,6 +59,7 @@ type ClubRow = {
 }
 type BureauRow = { id: number; role: string; name: string; filiere: string; photo_key: string | null; fixed: boolean }
 type PhotoRow = { id: number; label: string; key: string; ratio: number }
+type ActivityRow = { id: number; type: string; title: string; text: string; photo_key: string | null }
 type FeaturedRow = {
   title: string
   start_time: string
@@ -82,7 +88,7 @@ type DossierRow = {
   objectifs: string[] | null
   dossier_documents: { kind: string; name: string; file_key: string | null }[] | null
 }
-type PlanningRow = { month: string; club_slug: string | null; vacation: boolean }
+type PlanningRow = { month: string; club_slug: string | null; vacation: boolean; activity_date: string | null }
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
@@ -120,14 +126,15 @@ function toDossier(r: DossierRow): Dossier {
 
 async function loadClubPart(slug: string): Promise<Pick<AdminState, 'club' | 'saved' | 'draft' | 'photos' | 'cover' | 'log'>> {
   if (!supabase) throw new Error('Supabase non configuré')
-  const [clubRes, bureauRes, photosRes, featuredRes, logRes] = await Promise.all([
+  const [clubRes, bureauRes, photosRes, featuredRes, logRes, activitiesRes] = await Promise.all([
     supabase.from('clubs').select('*').eq('slug', slug).single<ClubRow>(),
     supabase.from('club_bureau').select('id, role, name, filiere, photo_key, fixed').eq('club_slug', slug).order('position'),
     supabase.from('club_photos').select('id, label, key, ratio').eq('club_slug', slug).order('position'),
     supabase.from('featured_activities').select('*').eq('club_slug', slug).maybeSingle<FeaturedRow>(),
     supabase.from('club_log').select('icon, text, who, created_at').eq('club_slug', slug).order('created_at', { ascending: false }).limit(5),
+    supabase.from('club_activities').select('id, type, title, text, photo_key').eq('club_slug', slug).order('position'),
   ])
-  for (const res of [clubRes, bureauRes, photosRes, featuredRes, logRes]) if (res.error) throw res.error
+  for (const res of [clubRes, bureauRes, photosRes, featuredRes, logRes, activitiesRes]) if (res.error) throw res.error
 
   const c = clubRes.data!
   const f = featuredRes.data
@@ -141,6 +148,9 @@ async function loadClubPart(slug: string): Promise<Pick<AdminState, 'club' | 'sa
     logoKey: c.logo_key,
     bureau: ((bureauRes.data ?? []) as BureauRow[]).map<BureauSlot>((b) => ({
       id: b.id, role: b.role, name: b.name, filiere: b.filiere, photoKey: b.photo_key, fixed: b.fixed,
+    })),
+    activities: ((activitiesRes.data ?? []) as ActivityRow[]).map<ActivityExample>((a) => ({
+      id: a.id, type: a.type, title: a.title, text: a.text, photoKey: a.photo_key,
     })),
     phare: f
       ? {
@@ -168,11 +178,11 @@ async function loadClubPart(slug: string): Promise<Pick<AdminState, 'club' | 'sa
   }
 }
 
-async function loadCommitteePart(): Promise<Pick<AdminState, 'dossiers' | 'planning' | 'clubOptions'>> {
+async function loadCommitteePart(): Promise<Pick<AdminState, 'dossiers' | 'planning' | 'planningDays' | 'clubOptions'>> {
   if (!supabase) throw new Error('Supabase non configuré')
   const [dossiersRes, planningRes, clubsRes] = await Promise.all([
     supabase.from('dossiers').select('*, dossier_documents(kind, name, file_key)').order('deposited_at', { ascending: false }),
-    supabase.from('planning').select('month, club_slug, vacation'),
+    supabase.from('planning').select('month, club_slug, vacation, activity_date'),
     supabase.from('clubs').select('slug, name').order('name'),
   ])
   if (dossiersRes.error) throw dossiersRes.error
@@ -180,13 +190,17 @@ async function loadCommitteePart(): Promise<Pick<AdminState, 'dossiers' | 'plann
   if (clubsRes.error) throw clubsRes.error
 
   const planning: Planning = {}
+  const planningDays: PlanningDays = {}
   for (const p of (planningRes.data ?? []) as PlanningRow[]) {
     const [y, m] = p.month.split('-').map(Number)
-    planning[`${y}-${(m ?? 1) - 1}`] = p.vacation ? '__vac' : (p.club_slug ?? '')
+    const key = `${y}-${(m ?? 1) - 1}`
+    planning[key] = p.vacation ? '__vac' : (p.club_slug ?? '')
+    if (p.activity_date) planningDays[key] = p.activity_date
   }
   return {
     dossiers: ((dossiersRes.data ?? []) as DossierRow[]).map(toDossier),
     planning,
+    planningDays,
     clubOptions: ((clubsRes.data ?? []) as { slug: string; name: string }[]).map((c) => [c.slug, c.name]),
   }
 }
@@ -203,6 +217,7 @@ export async function loadAdminState(user: AuthUser): Promise<AdminState> {
     cover: 0,
     dossiers: [],
     planning: {},
+    planningDays: {},
     clubOptions: [],
     log: [],
     toast: null,
@@ -253,6 +268,20 @@ export const MONTHS = Array.from({ length: 10 }, (_, i) => {
 
 export type CompletionCheck = { label: string; ok: boolean; to: ClubView }
 
+/** `YYYY-MM-DD` → date locale (sans décalage de fuseau). */
+export const parseDay = (iso: string) => {
+  const [y, m, d] = iso.split('-').map(Number)
+  return new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1)
+}
+
+export const toIsoDay = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+
+/** Jour de l'activité d'un mois : celui choisi par le Comité, sinon le dernier vendredi. */
+export function activityDay(days: PlanningDays, month: { key: string; fri: Date }): Date {
+  const chosen = days[month.key]
+  return chosen ? parseDay(chosen) : month.fri
+}
+
 export function getCompletion(draft: ClubDraft, photos: Photo[], cover: number) {
   const bureauOk = draft.bureau.filter((m) => m.fixed).every((m) => m.name.trim() && m.photoKey)
   const nObj = draft.objectifs.filter((o) => o.trim()).length
@@ -263,6 +292,7 @@ export function getCompletion(draft: ClubDraft, photos: Photo[], cover: number) 
     { label: 'Au moins 3 objectifs', ok: nObj >= 3, to: 'fiche' },
     { label: 'Au moins 2 réseaux sociaux', ok: nSoc >= 2, to: 'fiche' },
     { label: 'Bureau complet avec photos', ok: !!bureauOk, to: 'bureau' },
+    { label: "Au moins 2 exemples d'activités", ok: draft.activities.filter((a) => a.title.trim()).length >= 2, to: 'exemples' },
     { label: 'Au moins 6 photos dans la galerie', ok: photos.length >= 6, to: 'galerie' },
     { label: 'Photo de couverture choisie', ok: photos.some((p) => p.id === cover), to: 'galerie' },
   ]
@@ -271,14 +301,15 @@ export function getCompletion(draft: ClubDraft, photos: Photo[], cover: number) 
 }
 
 /** Mois à l'honneur du club connecté. */
-export function getClubMonth(planning: Planning, clubSlug: string, title: string) {
+export function getClubMonth(planning: Planning, days: PlanningDays, clubSlug: string, title: string) {
   const key = Object.keys(planning).find((k) => planning[k] === clubSlug)
   const month = MONTHS.find((m) => m.key === key)
   if (!month) return { label: 'Pas encore programmé', date: 'Le Comité annoncera ta date', countdown: '', title }
-  const left = diffDays(TODAY, month.fri)
+  const day = activityDay(days, month)
+  const left = diffDays(TODAY, day)
   return {
-    label: capitalize(fmt(month.fri, { month: 'long', year: 'numeric' })),
-    date: capitalize(fmt(month.fri, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })),
+    label: capitalize(fmt(day, { month: 'long', year: 'numeric' })),
+    date: capitalize(fmt(day, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })),
     countdown: left > 0 ? `dans ${left} jours` : left === 0 ? "aujourd'hui" : 'terminé',
     title,
   }

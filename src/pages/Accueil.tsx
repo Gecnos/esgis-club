@@ -9,11 +9,11 @@ import ClubOfMonthSection from '../features/planning/components/ClubOfMonthSecti
 import type { accueilLoader } from './loaders.ts'
 
 export default function Accueil() {
-  const { clubs, clubOfMonth, committee } = useLoaderData<Awaited<ReturnType<typeof accueilLoader>>>()
+  const { clubs, clubOfMonth, committee, heroPhotos } = useLoaderData<Awaited<ReturnType<typeof accueilLoader>>>()
 
   return (
     <>
-      <Hero />
+      <Hero photos={heroPhotos} />
       <InfoBar />
       <Mission />
       {clubOfMonth && <ClubOfMonthSection club={clubOfMonth} />}

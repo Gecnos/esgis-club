@@ -4,12 +4,17 @@ import { capitalize } from '../../lib/text.ts'
 import type { Category } from '../clubs/types.ts'
 import type { ClubOfMonth } from './types.ts'
 
-type PlanningRow = { club_slug: string | null; vacation: boolean }
+type PlanningRow = { club_slug: string | null; vacation: boolean; activity_date: string | null }
 type ClubRow = { slug: string; name: string; category: Category; members: number; photo_key: string | null }
 type FeaturedRow = { description: string; place: string; start_time: string; end_time: string; visual_key: string | null }
 
 const hour = (t: string) => t.slice(0, 5).replace(':', 'h')
 const pad = (n: number) => String(n).padStart(2, '0')
+
+const parseDay = (iso: string) => {
+  const [y, m, d] = iso.split('-').map(Number)
+  return new Date(y ?? 1970, (m ?? 1) - 1, d ?? 1)
+}
 
 /** Club à l'honneur ce mois-ci, ou `null` si aucun n'est programmé (ou vacances). */
 export async function getClubOfMonth(): Promise<ClubOfMonth | null> {
@@ -36,9 +41,16 @@ export async function getClubOfMonth(): Promise<ClubOfMonth | null> {
   }
 
   const month = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-01`
-  const { data: plan, error } = await supabase.from('planning').select('club_slug, vacation').eq('month', month).maybeSingle<PlanningRow>()
+  const { data: plan, error } = await supabase
+    .from('planning')
+    .select('club_slug, vacation, activity_date')
+    .eq('month', month)
+    .maybeSingle<PlanningRow>()
   if (error) throw error
   if (!plan?.club_slug || plan.vacation) return null
+  // Jour choisi par le Comité ; à défaut, le dernier vendredi du mois.
+  const day = plan.activity_date ? parseDay(plan.activity_date) : friday
+  const dayLabel = capitalize(fmt(day, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))
 
   const [clubRes, featuredRes] = await Promise.all([
     supabase.from('clubs').select('slug, name, category, members, photo_key').eq('slug', plan.club_slug).single<ClubRow>(),
@@ -60,6 +72,6 @@ export async function getClubOfMonth(): Promise<ClubOfMonth | null> {
     timeRange: featured ? `${hour(featured.start_time)} – ${hour(featured.end_time)}` : '',
     location: featured?.place ?? '',
     monthLabel,
-    dateLabel,
+    dateLabel: dayLabel,
   }
 }

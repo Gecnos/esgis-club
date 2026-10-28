@@ -72,7 +72,9 @@ create table public.planning (
   month      date primary key check (extract(day from month) = 1),
   club_slug  text references public.clubs (slug),
   vacation   boolean not null default false,
-  check (not (vacation and club_slug is not null))
+  activity_date date,                       -- jour de l'activité choisi par le Comité (défaut : dernier vendredi du mois)
+  check (not (vacation and club_slug is not null)),
+  check (activity_date is null or date_trunc('month', activity_date) = month)
 );
 create unique index planning_club_once_per_season on public.planning (
   club_slug,
@@ -88,6 +90,12 @@ create table public.committee_members (
   position   integer not null default 0
 );
 
+
+-- Réglages du site gérés par le Comité (ex. `hero_photos` : clés R2 des photos de l'accueil).
+create table public.site_settings (
+  key    text primary key,
+  value  jsonb not null default '[]'
+);
 
 create table public.club_log (
   id          bigint generated always as identity primary key,
@@ -158,8 +166,8 @@ language plpgsql security definer set search_path = public
 as $$
 begin
   if coalesce(public.app_role(), '') <> 'comite'
-     and (new.slug, new.name, new.category, new.members, new.founded, new.photo_key)
-         is distinct from (old.slug, old.name, old.category, old.members, old.founded, old.photo_key) then
+     and (new.slug, new.name, new.category, new.members, new.founded)
+         is distinct from (old.slug, old.name, old.category, old.members, old.founded) then
     raise exception 'Seul le Comité peut modifier le nom, la catégorie ou les chiffres d''un club';
   end if;
   return new;
@@ -178,6 +186,7 @@ alter table public.featured_activities enable row level security;
 alter table public.planning            enable row level security;
 alter table public.committee_members   enable row level security;
 alter table public.club_log            enable row level security;
+alter table public.site_settings       enable row level security;
 alter table public.dossiers            enable row level security;
 alter table public.dossier_documents   enable row level security;
 alter table public.profiles            enable row level security;
@@ -190,11 +199,13 @@ create policy "lecture publique" on public.club_activities     for select using 
 create policy "lecture publique" on public.featured_activities for select using (true);
 create policy "lecture publique" on public.planning            for select using (true);
 create policy "lecture publique" on public.committee_members   for select using (true);
+create policy "lecture publique" on public.site_settings       for select using (true);
 
 -- Le Comité gère tout le contenu.
 create policy "comité" on public.clubs               for all using (public.app_role() = 'comite') with check (public.app_role() = 'comite');
 create policy "comité" on public.planning            for all using (public.app_role() = 'comite') with check (public.app_role() = 'comite');
 create policy "comité" on public.committee_members   for all using (public.app_role() = 'comite') with check (public.app_role() = 'comite');
+create policy "comité" on public.site_settings       for all using (public.app_role() = 'comite') with check (public.app_role() = 'comite');
 
 -- Un responsable de club gère uniquement la fiche de son club (la garde `clubs_guard` protège nom et catégorie).
 create policy "responsable" on public.clubs

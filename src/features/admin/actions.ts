@@ -28,6 +28,7 @@ export function discardDraft(s: AdminState): AdminState {
 export const publishLabels: Partial<Record<ClubView, [icon: string, text: string]>> = {
   fiche: ['edit', 'Fiche du club mise à jour'],
   bureau: ['badge', 'Bureau mis à jour'],
+  exemples: ['celebration', "Exemples d'activités mis à jour"],
   activite: ['workspace_premium', 'Activité phare mise à jour'],
 }
 
@@ -75,8 +76,16 @@ export const dossierMessages = {
 
 export function setPlanning(s: AdminState, key: string, slug: string): AdminState {
   const planning = { ...s.planning, [key]: slug }
+  const planningDays = { ...s.planningDays }
+  if (!slug) delete planningDays[key]
   const month = MONTHS.find((m) => m.key === key)
   const monthName = month ? capitalize(fmt(month.fri, { month: 'long' })) : ''
   const msg = slug ? `${monthName} : Club ${clubName(s.clubOptions, slug)} programmé` : 'Mois libéré'
-  return withToast({ ...s, planning }, msg)
+  return withToast({ ...s, planning, planningDays }, msg)
+}
+
+export function setPlanningDay(s: AdminState, key: string, iso: string): AdminState {
+  const month = MONTHS.find((m) => m.key === key)
+  const label = month ? capitalize(fmt(month.fri, { month: 'long' })) : ''
+  return withToast({ ...s, planningDays: { ...s.planningDays, [key]: iso } }, `${label} : jour de l'activité enregistré`)
 }
