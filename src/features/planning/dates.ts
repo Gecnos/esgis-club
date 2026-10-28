@@ -10,7 +10,3 @@ export function nextMonthlyActivity(now: Date): Date {
   const thisMonth = lastFriday(now.getFullYear(), now.getMonth())
   return thisMonth >= now ? thisMonth : lastFriday(now.getFullYear(), now.getMonth() + 1)
 }
-
-export function capitalize(text: string): string {
-  return text.charAt(0).toUpperCase() + text.slice(1)
-}

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import Icon from '../../../components/Icon.tsx'
-import { capitalize, nextMonthlyActivity } from '../dates.ts'
+import { capitalize } from '../../../lib/text.ts'
+import { nextMonthlyActivity } from '../dates.ts'
 import type { ClubOfMonth } from '../types.ts'
 
 const pad = (n: number) => String(n).padStart(2, '0')
