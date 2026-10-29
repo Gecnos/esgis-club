@@ -133,3 +133,12 @@ Passer par une branche et une Pull Request, vérifier l'URL de prévisualisation
 | « Le service de comptes est indisponible » | `admin-users` non déployée | `npx supabase functions deploy admin-users`, regarder les logs |
 | Connexion OK mais « pas encore d'accès à l'espace admin » | Compte sans ligne dans `profiles` | Recréer le compte depuis le menu Comptes, ou ajouter la ligne en SQL |
 | Mot de passe oublié sans email reçu | Quota d'emails Supabase ou SMTP absent | Nouveau mot de passe depuis le menu Comptes |
+
+## Référencement (SEO)
+
+- Renseigner la variable de build **`VITE_SITE_URL`** (ex. `https://clubs.esgis.bj`, sans slash final) : elle sert à l'URL canonique, à l'aperçu de partage et au `sitemap.xml` généré au build (accueil + un lien par club, lus dans Supabase). Sans elle, seul `robots.txt` est produit.
+- `robots.txt` interdit l'indexation de `/admin` et `/connexion` (les pages portent aussi `noindex`).
+- Chaque page club a son propre titre et sa description (« Club Robotique · ESGIS Clubs »).
+- Après la mise en ligne : ajouter le site dans [Google Search Console](https://search.google.com/search-console), valider le domaine, puis **Sitemaps → `sitemap.xml`**. Même chose dans Bing Webmaster Tools.
+- Optionnel : déposer `public/og-image.png` (1200×630) pour l'image affichée au partage sur WhatsApp et les réseaux.
+- Le site est une application React rendue dans le navigateur : Google l'indexe, mais plus lentement qu'un site pré-rendu. Si l'indexation s'avère insuffisante, prévoir un pré-rendu des pages clubs.

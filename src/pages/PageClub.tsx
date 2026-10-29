@@ -18,6 +18,8 @@ export default function PageClub() {
   if (!club) {
     return (
       <div className="wrap flex flex-col items-start gap-4 py-24">
+        <title>Club introuvable · ESGIS Clubs</title>
+        <meta name="robots" content="noindex" />
         <h1 className="m-0 text-[clamp(30px,calc(2.2vw+18px),40px)] font-bold">Club introuvable</h1>
         <p className="m-0 text-base/6 text-muted">Ce club n'existe pas ou n'est plus actif.</p>
         <Link to="/#clubs" className="font-semibold text-navy">
@@ -29,6 +31,10 @@ export default function PageClub() {
 
   return (
     <>
+      <title>{`Club ${club.name} · ESGIS Clubs`}</title>
+      <meta name="description" content={`${club.description} Club ${club.category} de l'ESGIS : activités, bureau, photos et adhésion.`} />
+      <meta property="og:title" content={`Club ${club.name} · ESGIS Clubs`} />
+      <meta property="og:description" content={club.description} />
       <ClubHero club={club} isClubOfMonth={club.slug === clubOfMonthSlug} />
       <div className="wrap flex flex-col gap-[clamp(56px,7vw,88px)] pb-[clamp(64px,8vw,104px)] pt-[clamp(48px,6vw,72px)]">
         <ClubAbout club={club} />
