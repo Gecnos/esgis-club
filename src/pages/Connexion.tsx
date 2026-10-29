@@ -7,5 +7,11 @@ export default function Connexion() {
 
   // Déjà connecté : on envoie directement vers l'espace correspondant.
   if (!loading && user) return <Navigate to={user.role === 'comite' ? '/admin/comite' : '/admin/club'} replace />
-  return <LoginForm />
+  return (
+    <>
+      <title>Connexion · ESGIS Clubs</title>
+      <meta name="robots" content="noindex" />
+      <LoginForm />
+    </>
+  )
 }
