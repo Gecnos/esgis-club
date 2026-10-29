@@ -6,41 +6,41 @@ Ce guide couvre : héberger le site, le relier à un domaine, le publier à chaq
 
 | Élément | Où | Rôle |
 | --- | --- | --- |
-| Site (fichiers statiques) | Cloudflare Pages (recommandé) | Sert le dossier `dist/` généré par `npm run build` |
+| Site (fichiers statiques) | Cloudflare Workers & Pages | Sert le dossier `dist/` généré par `npm run build` |
 | Base de données, comptes, fonctions | Supabase | Données, authentification, fonctions `r2-presign` et `admin-users` |
 | Images et documents | Cloudflare R2 | Fichiers envoyés par les clubs et les dossiers |
 | Code | GitHub `Gecnos/esgis-club` | `main` = production, `dev` = intégration |
 
 Le site est une application statique : il n'y a **pas de serveur à administrer**. Tout ce qui demande un secret passe par les fonctions Supabase.
 
-## 1. Héberger le site sur Cloudflare Pages
+## 1. Héberger le site sur Cloudflare
 
-Cloudflare Pages est gratuit pour ce usage, et R2 est déjà chez Cloudflare.
+Cloudflare regroupe maintenant Pages et Workers sous **Workers & Pages** : le projet `esgis-club` est un *Worker* qui sert le dossier `dist/` (Workers Builds). C'est gratuit pour cet usage, et R2 est déjà chez Cloudflare.
 
-1. Dashboard Cloudflare → **Workers & Pages → Create → Pages → Connect to Git**, choisir `Gecnos/esgis-club`.
-2. Configuration du build :
+1. Dashboard Cloudflare → **Workers & Pages → Create → Import a repository**, choisir `Gecnos/esgis-club`.
+2. **Settings → Builds** du projet :
    - **Production branch** : `main`
    - **Build command** : `npm run build`
-   - **Build output directory** : `dist`
-   - **Variables d'environnement** (onglet Settings → Variables and Secrets, pour *Production* et *Preview*) :
+   - **Deploy command** : `npx wrangler deploy`
+   - **Root directory** : `/`
+3. **Settings → Builds → Variables and secrets → Add** (variables de *build*, pas les « Runtime variables » du haut de la page) :
 
 | Variable | Valeur |
 | --- | --- |
-| `NODE_VERSION` | `24` |
 | `VITE_SUPABASE_URL` | `https://qypyxolgfewqdrehfuaz.supabase.co` |
-| `VITE_SUPABASE_ANON_KEY` | clé `anon` (publique) |
-| `VITE_R2_PUBLIC_URL` | domaine public du bucket d'images |
+| `VITE_SUPABASE_ANON_KEY` | clé `anon` (publique), la même que dans `.env.local` |
+| `VITE_R2_PUBLIC_URL` | domaine public du bucket d'images (`https://pub-….r2.dev` ou domaine personnalisé) |
 
-3. Lancer le premier déploiement. Les variables `VITE_*` sont **inscrites dans le code au moment du build** : après les avoir modifiées, il faut redéployer.
-4. Les fichiers `public/_redirects` (toutes les routes renvoient `index.html`, indispensable pour `/clubs/robotique` ou `/connexion` en accès direct) et `public/_headers` (en-têtes de sécurité, cache des fichiers versionnés) sont déjà dans le dépôt.
+4. Lancer le déploiement (**Deployments → Retry build**, ou un push sur `main`). Les variables `VITE_*` sont **inscrites dans le code au moment du build** : après les avoir modifiées, il faut redéployer. Sans elles, le site tourne en mode démonstration.
+5. Le fichier `wrangler.jsonc` (à la racine) demande à Cloudflare de servir `dist/` et de renvoyer `index.html` pour toute route inconnue (`/clubs/robotique`, `/connexion` en accès direct). **Ne pas ajouter de `public/_redirects` avec `/* /index.html 200`** : Cloudflare le refuse (« Infinite loop detected »). `public/_headers` (en-têtes de sécurité, cache des fichiers versionnés) est, lui, pris en charge.
 
 Chaque Pull Request obtient automatiquement une **URL de prévisualisation** : pratique pour valider avant de merger.
 
-> Autre hébergeur possible (Netlify, Vercel) : mêmes commandes et même dossier ; les fichiers `_redirects` et `_headers` sont compris par Netlify, pas par Vercel (il faudrait un `vercel.json`).
+> Autre hébergeur possible (Netlify, Vercel) : mêmes commandes et même dossier ; `_headers` est compris par Netlify, pas par Vercel (il faudrait un `vercel.json`), et il faudrait ajouter un `_redirects` avec `/* /index.html 200`.
 
 ## 2. Nom de domaine
 
-1. Cloudflare Pages → le projet → **Custom domains → Set up a domain** (ex. `clubs.esgis.bj`). Si le domaine n'est pas chez Cloudflare, ajouter l'enregistrement CNAME indiqué chez le registrar.
+1. Workers & Pages → le projet → **Settings → Domains & Routes → Add → Custom domain** (ex. `clubs.esgis.bj`). Si le domaine n'est pas chez Cloudflare, ajouter l'enregistrement CNAME indiqué chez le registrar.
 2. Une fois le domaine actif, mettre à jour **partout** l'adresse du site :
    - Supabase → **Authentication → URL Configuration** : *Site URL* et *Redirect URLs*.
    - Secret `ALLOWED_ORIGIN` des fonctions (puis redéployer les deux fonctions) : `npx supabase secrets set ALLOWED_ORIGIN=https://clubs.esgis.bj`.
@@ -61,7 +61,7 @@ Le flux de travail est celui du dépôt (voir README) :
 
 ## 4. Annuler un mauvais déploiement
 
-- **Site** : Cloudflare Pages → **Deployments** → choisir le dernier déploiement sain → **Rollback to this deployment** (instantané).
+- **Site** : Workers & Pages → le projet → **Deployments** → choisir une version saine → **Rollback** (instantané).
 - **Code** : `git revert <commit>` dans une branche, Pull Request, merge.
 - **Base** : il n'y a pas d'annulation automatique. Restaurer une sauvegarde (section 6) ou écrire la requête inverse.
 
@@ -118,14 +118,16 @@ npm update            # mises à jour compatibles
 npm run lint && npm run build
 ```
 
-Passer par une branche et une Pull Request, vérifier l'URL de prévisualisation, puis merger. Mettre à jour **Node** (24 LTS) en local et la variable `NODE_VERSION` de Pages ; les versions majeures (React, Vite, React Router, TypeScript) se traitent à part, avec lecture des notes de version.
+Passer par une branche et une Pull Request, vérifier l'URL de prévisualisation, puis merger. Mettre à jour **Node** (24 LTS) en local (Cloudflare détecte la version via `NODE_VERSION`, à définir dans les variables de build si besoin) ; les versions majeures (React, Vite, React Router, TypeScript) se traitent à part, avec lecture des notes de version.
 
 ## 10. En cas de problème
 
 | Symptôme | Cause probable | Action |
 | --- | --- | --- |
 | Pages blanches ou « Chargement impossible » | Supabase en pause ou indisponible | Vérifier le dashboard Supabase, relancer le projet |
-| 404 en rafraîchissant `/clubs/...` | `_redirects` non déployé | Vérifier que `dist/_redirects` existe après le build |
+| 404 en rafraîchissant `/clubs/...` | `not_found_handling` absent | Vérifier `wrangler.jsonc` (valeur `single-page-application`) |
+| Build en échec « Infinite loop detected » | Fichier `public/_redirects` | Le supprimer : `wrangler.jsonc` gère déjà les routes |
+| Site en mode démo après déploiement | Variables `VITE_*` absentes du build | Les ajouter dans Settings → Builds → Variables and secrets, puis relancer le build |
 | Images cassées | `VITE_R2_PUBLIC_URL` incorrect ou bucket non public | Ouvrir l'URL d'une image à la main ; la variable doit être le domaine public, pas l'adresse `…r2.cloudflarestorage.com` |
 | Envoi de photo refusé | CORS du bucket, secrets R2 ou `ALLOWED_ORIGIN` | Vérifier le domaine dans les trois, redéployer `r2-presign` |
 | « Le service de comptes est indisponible » | `admin-users` non déployée | `npx supabase functions deploy admin-users`, regarder les logs |
