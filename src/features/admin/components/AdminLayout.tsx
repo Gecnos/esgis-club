@@ -53,6 +53,8 @@ function Shell() {
 
   return (
     <div className="grid min-h-screen bg-soft text-navy min-[900px]:grid-cols-[264px_minmax(0,1fr)]">
+      <title>Espace admin · ESGIS Clubs</title>
+      <meta name="robots" content="noindex" />
       {!isMobile && (
         <aside className="bg-navy text-white">
           <div className="sticky top-0 flex flex-col gap-7 px-4 pb-8 pt-5">
