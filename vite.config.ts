@@ -19,7 +19,7 @@ async function clubSlugs(supabaseUrl: string, anonKey: string): Promise<string[]
   return [...readFileSync('src/features/clubs/data.ts', 'utf8').matchAll(/slug: '([a-z0-9-]+)'/g)].map((m) => m[1])
 }
 
-/** Génère robots.txt et sitemap.xml au build. L'adresse du site vient de VITE_SITE_URL (voir docs/deploiement.md). */
+/** Génère robots.txt, sitemap.xml et llms.txt au build. L'adresse du site vient de VITE_SITE_URL (voir docs/deploiement.md). */
 function seoFiles(): Plugin {
   let siteUrl = ''
   let supabaseUrl = ''
@@ -42,18 +42,58 @@ function seoFiles(): Plugin {
       }
       robots.push(`Sitemap: ${siteUrl}/sitemap.xml`)
       const slugs = await clubSlugs(supabaseUrl, anonKey)
-      const urls = [`${siteUrl}/`, ...slugs.map((s) => `${siteUrl}/clubs/${s}`)]
+      const lastmod = new Date().toISOString().split('T')[0]
+
+      // Sitemap avec lastmod, changefreq et priority
+      const sitemapUrls = [
+        `  <url><loc>${siteUrl}/</loc><lastmod>${lastmod}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>`,
+        ...slugs.map(
+          (s) =>
+            `  <url><loc>${siteUrl}/clubs/${s}</loc><lastmod>${lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`,
+        ),
+      ]
       const sitemap =
         `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-        urls.map((u) => `  <url><loc>${u}</loc></url>`).join('\n') +
+        sitemapUrls.join('\n') +
         `\n</urlset>\n`
+
+      // llms.txt pour les agents IA (GEO/AEO)
+      const llmsTxt = [
+        `# ESGIS Clubs`,
+        ``,
+        `> Les clubs étudiants de l'ESGIS (Ecole Supérieure de Génie Informatique et des Sciences) à Cotonou, Bénin.`,
+        ``,
+        `## Pages principales`,
+        ``,
+        `- [Accueil](${siteUrl}/) : Liste de tous les clubs ESGIS par catégorie (Sport, Tech, Arts & Culture, Business & Langues).`,
+        ...slugs.map((s) => `- [Club ${s}](${siteUrl}/clubs/${s}) : Page détaillée du club ${s}.`),
+        ``,
+        `## Informations`,
+        ``,
+        `- Localisation : Cotonou, Bénin`,
+        `- Nombre de clubs : ${slugs.length}`,
+        `- Catégories : Sport, Tech, Arts & Culture, Business & Langues`,
+        `- Adhésion : via WhatsApp, gratuit`,
+        `- Création de club : dossier en ligne`,
+      ].join('\n')
+
       this.emitFile({ type: 'asset', fileName: 'robots.txt', source: robots.join('\n') + '\n' })
       this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemap })
+      this.emitFile({ type: 'asset', fileName: 'llms.txt', source: llmsTxt + '\n' })
     },
     transformIndexHtml(html) {
       // Balises dépendant de l'adresse du site (URL canonique, aperçu de partage).
       if (!siteUrl) return html
-      return html.replace('</head>', `    <link rel="canonical" href="${siteUrl}/" />\n    <meta property="og:url" content="${siteUrl}/" />\n    <meta property="og:image" content="${siteUrl}/og-image.png" />\n  </head>`)
+      return html.replace(
+        '</head>',
+        [
+          `    <link rel="canonical" href="${siteUrl}/" />`,
+          `    <meta property="og:url" content="${siteUrl}/" />`,
+          `    <meta property="og:image" content="${siteUrl}/og-image.png" />`,
+          `    <meta name="twitter:image" content="${siteUrl}/og-image.png" />`,
+          `  </head>`,
+        ].join('\n'),
+      )
     },
   }
 }

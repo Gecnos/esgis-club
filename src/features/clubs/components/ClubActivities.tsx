@@ -2,14 +2,15 @@ import CoverImage from '../../../components/CoverImage.tsx'
 import type { Activity } from '../types.ts'
 
 export default function ClubActivities({ activities }: { activities: Activity[] }) {
+  if (activities.length === 0) return null
   return (
-    <section className="flex flex-col gap-6">
-      <h2 className="m-0 text-[28px]/9 font-semibold">Exemples d'activités</h2>
+    <section aria-labelledby="activites-titre" className="flex flex-col gap-6">
+      <h2 id="activites-titre" className="m-0 text-[28px]/9 font-semibold">Exemples d'activités</h2>
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-6">
         {activities.map((a) => (
-          <article key={a.title} className="flex flex-col overflow-hidden rounded-xl bg-soft">
+          <article key={a.title} aria-label={`Activité : ${a.title}`} className="flex flex-col overflow-hidden rounded-xl bg-soft">
             <div className="relative flex aspect-[4/3] items-end bg-[repeating-linear-gradient(135deg,#e1e6ee_0_10px,#eaeef4_10px_20px)] p-3 font-mono text-[11px] text-muted">
-              <CoverImage src={a.photoKey} />
+              <CoverImage src={a.photoKey} alt={`${a.type} – ${a.title}`} />
               {a.photo}
               <span className="absolute left-3 top-3 rounded-full bg-white px-2.5 py-1 font-sans text-[13px]/[18px] font-medium">
                 {a.type}

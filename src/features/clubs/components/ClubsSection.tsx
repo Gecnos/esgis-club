@@ -54,6 +54,7 @@ export default function ClubsSection({ clubs, clubOfMonthSlug }: Props) {
             <Link
               key={c.slug}
               to={`/clubs/${c.slug}`}
+              aria-label={`Découvrir le Club ${c.name} – ${c.category} à l'ESGIS`}
               className="flex flex-col overflow-hidden rounded-xl bg-white text-navy no-underline shadow-[0_1px_2px_rgb(11_31_58/0.06),0_4px_16px_rgb(11_31_58/0.05)] transition hover:-translate-y-0.5 hover:shadow-[0_2px_4px_rgb(11_31_58/0.06),0_14px_30px_rgb(11_31_58/0.10)]"
             >
               <div className="ph-light relative flex aspect-[16/10] items-end p-3 font-mono text-[11px] text-muted">

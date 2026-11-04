@@ -52,7 +52,7 @@ export default function ClubOfMonthSection({ club }: { club: ClubOfMonth }) {
 
         <article className="mt-8 grid grid-cols-[repeat(auto-fit,minmax(min(100%,460px),1fr))] overflow-hidden rounded-xl bg-navy text-white shadow-[0_16px_40px_rgb(11_31_58/0.18)]">
           <div className="ph-navy relative flex min-h-[clamp(220px,30vw,440px)] items-end p-4 font-mono text-xs text-steel">
-            <CoverImage src={club.photoKey} alt={club.clubName} />
+            <CoverImage src={club.photoKey} alt={`Photo du Club ${club.clubName} – Club du mois ESGIS`} />
             photo · {club.photoLabel}
             <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 font-sans text-[13px]/[18px] font-medium text-white">
               <Icon name="workspace_premium" size={16} />
@@ -71,11 +71,11 @@ export default function ClubOfMonthSection({ club }: { club: ClubOfMonth }) {
             <div className="flex flex-col gap-2 text-[15px]/[22px]">
               <span className="flex items-center gap-2.5">
                 <Icon name="calendar_month" size={20} className="text-mist" />
-                {dateLabel} · {club.timeRange}
+                <time dateTime={target.toISOString()}>{dateLabel} · {club.timeRange}</time>
               </span>
               <span className="flex items-center gap-2.5">
                 <Icon name="location_on" size={20} className="text-mist" />
-                {club.location}
+                <address className="not-italic">{club.location}</address>
               </span>
             </div>
 
@@ -102,6 +102,7 @@ export default function ClubOfMonthSection({ club }: { club: ClubOfMonth }) {
 
             <Link
               to={`/clubs/${club.clubSlug}#activite`}
+              aria-label={`Voir le programme de l'activité du Club ${club.clubName}`}
               className="flex h-[52px] items-center gap-2 self-start rounded-xl bg-accent px-6 text-base font-semibold text-white no-underline hover:bg-accent-dark"
             >
               Voir le programme
