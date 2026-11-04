@@ -21,7 +21,7 @@ export default function Hero({ photos: keys = [] }: { photos?: HeroPhotos }) {
             Inscriptions ouvertes · 2026–2027
           </span>
           <h1 className="m-0 text-balance text-[clamp(30px,calc(2.2vw+18px),40px)] font-bold leading-[1.2] tracking-[-.02em]">
-            Trouve ton club, construis ton réseau
+            Trouve ton club ESGIS, construis ton réseau
           </h1>
           <p className="m-0 max-w-[460px] text-pretty text-base/6 text-mist">
             11 clubs étudiants, ouverts à toutes les filières. Choisis ta passion, retrouve ton équipe chaque vendredi et
@@ -53,7 +53,8 @@ export default function Hero({ photos: keys = [] }: { photos?: HeroPhotos }) {
               key={p.label}
               className={`ph-dark relative flex items-end rounded-xl border border-white/10 p-2.5 font-mono text-[11px] text-steel ${p.className}`}
             >
-              <CoverImage src={keys[i]} />
+              {/* priority sur la première image (LCP homepage) */}
+              <CoverImage src={keys[i]} priority={i === 0} />
               {!keys[i] && <>photo · {p.label}</>}
             </div>
           ))}
