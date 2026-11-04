@@ -4,14 +4,16 @@ import Icon from '../../../components/Icon.tsx'
 import type { Club } from '../types.ts'
 
 export default function SimilarClubs({ clubs }: { clubs: Club[] }) {
+  if (clubs.length === 0) return null
   return (
-    <section className="flex flex-col gap-6">
-      <h2 className="m-0 text-[28px]/9 font-semibold">Autres clubs qui pourraient te plaire</h2>
+    <section aria-labelledby="clubs-similaires-titre" className="flex flex-col gap-6">
+      <h2 id="clubs-similaires-titre" className="m-0 text-[28px]/9 font-semibold">Autres clubs de l'ESGIS</h2>
       <div className="-mx-[clamp(16px,4vw,24px)] grid snap-x snap-mandatory auto-cols-[minmax(min(84%,320px),1fr)] grid-flow-col gap-4 overflow-x-auto px-[clamp(16px,4vw,24px)] pb-3 pt-1 [scroll-padding:0_clamp(16px,4vw,24px)] [scrollbar-width:none]">
         {clubs.map((c) => (
           <Link
             key={c.slug}
             to={`/clubs/${c.slug}`}
+            aria-label={`Découvrir le Club ${c.name} – ${c.category} à l'ESGIS`}
             className="flex snap-start flex-col overflow-hidden rounded-xl border border-[#eef1f5] bg-white text-navy no-underline shadow-[0_1px_2px_rgb(11_31_58/0.06),0_4px_16px_rgb(11_31_58/0.06)] hover:shadow-[0_2px_4px_rgb(11_31_58/0.06),0_14px_30px_rgb(11_31_58/0.10)]"
           >
             <div className="ph-light relative flex aspect-[16/10] items-end p-3 font-mono text-[11px] text-muted">

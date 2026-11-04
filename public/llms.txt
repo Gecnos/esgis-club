@@ -1,0 +1,31 @@
+# ESGIS Clubs
+
+> Les clubs étudiants de l'ESGIS (École Supérieure de Génie Informatique et des Sciences) à Cotonou, Bénin.
+
+## Pages principales
+
+- [Accueil](https://esgis-club.pages.dev/) : Liste de tous les clubs ESGIS par catégorie (Sport, Tech, Arts & Culture, Business & Langues).
+- [Club Football](https://esgis-club.pages.dev/clubs/football) : Club de football de l'ESGIS, entraînements chaque vendredi et tournoi inter-promotions.
+- [Club Basketball](https://esgis-club.pages.dev/clubs/basketball) : Matchs 3x3 et 5x5, tous niveaux bienvenus.
+- [Club Robotique](https://esgis-club.pages.dev/clubs/robotique) : Arduino, capteurs et robots autonomes construits en équipe.
+- [Club Dev](https://esgis-club.pages.dev/clubs/dev) : Web, mobile et hackathons pour coder de vrais projets.
+- [Club Cybersécurité](https://esgis-club.pages.dev/clubs/cybersecurite) : Challenges CTF, sécurité réseau et bonnes pratiques.
+- [Club Danse](https://esgis-club.pages.dev/clubs/danse) : Afro, hip-hop et contemporain.
+- [Club Musique](https://esgis-club.pages.dev/clubs/musique) : Chant, instruments et jam sessions.
+- [Club Otaku](https://esgis-club.pages.dev/clubs/otaku) : Manga, anime et culture japonaise.
+- [Club Art & Déco](https://esgis-club.pages.dev/clubs/art-deco) : Peinture, upcycling et décoration des événements ESGIS.
+- [Club Entrepreneuriat](https://esgis-club.pages.dev/clubs/entrepreneuriat) : Du pitch au prototype, avec des mentors.
+- [Club Anglais](https://esgis-club.pages.dev/clubs/anglais) : Conversation, débats et préparation au TOEIC.
+
+## Informations
+
+- Établissement : ESGIS – École Supérieure de Génie Informatique et des Sciences
+- Localisation : Cotonou, Bénin
+- Nombre de clubs : 11
+- Catégories : Sport, Tech, Arts & Culture, Business & Langues
+- Adhésion : via WhatsApp, gratuit pour tous les étudiants ESGIS
+- Création de club : dossier en ligne sur le site
+
+## À propos
+
+ESGIS Clubs est la plateforme officielle des clubs étudiants de l'ESGIS Cotonou. Elle permet aux étudiants de découvrir les clubs actifs, de rejoindre un club via WhatsApp en un clic, ou de soumettre un dossier pour créer un nouveau club. Les clubs sont organisés en quatre catégories : Sport, Tech, Arts & Culture, et Business & Langues.

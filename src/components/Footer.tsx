@@ -3,7 +3,13 @@ import Icon from './Icon.tsx'
 import Logo from './Logo.tsx'
 import { navLinks } from './nav.ts'
 
-const reseaux = ['Instagram', 'Facebook', 'TikTok', 'LinkedIn']
+// Mettre à jour avec les vraies URLs des réseaux quand disponibles
+const reseaux: { label: string; href: string }[] = [
+  { label: 'Instagram', href: 'https://instagram.com/esgis_clubs' },
+  { label: 'Facebook', href: 'https://facebook.com/esgisclubs' },
+  { label: 'TikTok', href: 'https://tiktok.com/@esgis_clubs' },
+  { label: 'LinkedIn', href: 'https://linkedin.com/company/esgis-clubs' },
+]
 
 const titre = 'text-[13px]/[18px] font-medium uppercase tracking-[.08em] text-steel'
 const ligne = 'flex min-h-11 items-center gap-3 text-[15px] text-white no-underline'
@@ -37,22 +43,24 @@ export default function Footer() {
 
           <div className="flex flex-col gap-1">
             <span className={`${titre} mb-2`}>Contact du Comité</span>
-            <a href="mailto:comite.clubs@esgis.bj" className={ligne}>
-              <Icon name="mail" size={20} className="text-mist" />
-              comite.clubs@esgis.bj
-            </a>
-            <a href="https://wa.me/2290197000000" className={ligne}>
-              <Icon name="call" size={20} className="text-mist" />
-              +229 01 97 00 00 00
-            </a>
-            <span className={ligne}>
-              <Icon name="location_on" size={20} className="text-mist" />
-              Campus ESGIS, Cotonou
-            </span>
-            <span className={ligne}>
-              <Icon name="schedule" size={20} className="text-mist" />
-              Permanence le vendredi, 12h – 14h
-            </span>
+            <address className="not-italic flex flex-col gap-1">
+              <a href="mailto:comite.clubs@esgis.bj" className={ligne}>
+                <Icon name="mail" size={20} className="text-mist" />
+                comite.clubs@esgis.bj
+              </a>
+              <a href="https://wa.me/2290197000000" rel="noopener noreferrer" className={ligne}>
+                <Icon name="call" size={20} className="text-mist" />
+                +229 01 97 00 00 00
+              </a>
+              <span className={ligne}>
+                <Icon name="location_on" size={20} className="text-mist" />
+                Campus ESGIS, Cotonou, Bénin
+              </span>
+              <span className={ligne}>
+                <Icon name="schedule" size={20} className="text-mist" />
+                Permanence le vendredi, 12h – 14h
+              </span>
+            </address>
           </div>
 
           <div className="flex flex-col gap-3">
@@ -60,11 +68,14 @@ export default function Footer() {
             <div className="flex flex-wrap gap-2">
               {reseaux.map((r) => (
                 <a
-                  key={r}
-                  href="#"
+                  key={r.label}
+                  href={r.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`ESGIS Clubs sur ${r.label}`}
                   className="flex h-11 items-center rounded-full border border-white/25 px-4 text-sm font-semibold text-white no-underline hover:bg-white/10"
                 >
-                  {r}
+                  {r.label}
                 </a>
               ))}
             </div>

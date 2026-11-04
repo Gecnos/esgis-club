@@ -18,7 +18,8 @@ export default function JoinBar({ clubName, href }: Props) {
       <a
         href={href}
         target="_blank"
-        rel="noopener"
+        rel="noopener noreferrer"
+        aria-label={`Rejoindre le Club ${clubName} sur WhatsApp`}
         className="flex h-[52px] flex-none items-center gap-2 rounded-xl bg-accent px-5 text-base font-semibold text-white no-underline"
       >
         <Icon name="chat" size={20} />

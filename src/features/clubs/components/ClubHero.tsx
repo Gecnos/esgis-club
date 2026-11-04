@@ -4,6 +4,8 @@ import Icon from '../../../components/Icon.tsx'
 import type { ClubDetail } from '../types.ts'
 import { whatsappLink } from '../whatsapp.ts'
 
+const SITE_URL = 'https://esgis-club.pages.dev'
+
 function initials(name: string) {
   const letters = name
     .replace(/&/g, '')
@@ -21,8 +23,20 @@ export default function ClubHero({ club, isClubOfMonth }: { club: ClubDetail; is
 
   return (
     <section>
+      {/* BreadcrumbList Schema.org pour le fil d'Ariane dans les SERPs Google */}
+      <script type="application/ld+json">{JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_URL + '/' },
+          { '@type': 'ListItem', position: 2, name: 'Les clubs', item: SITE_URL + '/#clubs' },
+          { '@type': 'ListItem', position: 3, name: `Club ${club.name}`, item: `${SITE_URL}/clubs/${club.slug}` },
+        ],
+      })}</script>
+
       <div className="ph-navy relative h-[clamp(176px,24vw,320px)]">
-        <CoverImage src={club.coverKey} alt={`Couverture du Club ${club.name}`} />
+        {/* priority=true → LCP : loading eager + fetchpriority high */}
+        <CoverImage priority src={club.coverKey} alt={`Photo de couverture du Club ${club.name} – ESGIS Cotonou`} />
         <div className="wrap relative flex h-full flex-col justify-between py-4">
           <nav aria-label="Fil d'Ariane" className="flex flex-wrap gap-2 text-[13px]/[18px] font-medium text-mist">
             <Link to="/" className="text-white no-underline">Accueil</Link>
@@ -77,7 +91,8 @@ export default function ClubHero({ club, isClubOfMonth }: { club: ClubDetail; is
             <a
               href={whatsappLink(club)}
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
+              aria-label={`Rejoindre le Club ${club.name} sur WhatsApp`}
               className="flex h-[52px] items-center gap-2 rounded-xl bg-accent px-6 text-base font-semibold text-white no-underline shadow-[0_6px_16px_rgb(214_40_57/0.25)] hover:bg-accent-dark"
             >
               <Icon name="chat" size={20} />

@@ -34,7 +34,17 @@ Le code est organisé par features (`src/features/<feature>/`), les pages (`src/
 - Le schéma de base et les droits (RLS) sont dans `supabase/schema.sql` ; toute nouvelle table ou colonne doit y être ajoutée, avec sa politique RLS. Procédure de branchement : `docs/supabase.md` ; mise en ligne et maintenance : `docs/deploiement.md`. Les comptes sont créés par le Comité via la fonction `admin-users` (seule à utiliser la clé service_role).
 - Authentification : `features/auth` (email + mot de passe, rôle dans la table `profiles`). Le mode démo de connexion n'existe qu'en développement.
 
+## SEO
+
+- URL du site : `https://esgis-club.pages.dev` (à mettre à jour dans `VITE_SITE_URL` et dans la constante `SITE_URL` de `src/pages/PageClub.tsx` et `index.html` si le domaine change).
+- Au build, `vite.config.ts` génère automatiquement : `robots.txt`, `sitemap.xml` (avec `lastmod`, `changefreq`, `priority`) et `llms.txt` (pour les agents IA).
+- En développement, `public/llms.txt` est un fichier statique à maintenir à jour manuellement quand on ajoute des clubs.
+- Les pages `PageClub.tsx` incluent : balise `<title>`, `<meta name="description">`, `<link rel="canonical">`, OG tags, Twitter Cards et Schema.org JSON-LD.
+- Les pages `/admin/*` et `/connexion` ont `noindex` via `_headers` Cloudflare.
+- Si tu ajoutes un nouveau club dans `data.ts`, ajoute aussi son entrée dans `public/llms.txt` et dans le Schema.org `hasPart` de `index.html`.
+
 ## Conventions Git
+
 
 - Aucun commit direct sur `main` ni sur `dev`.
 - Une branche par ticket, créée depuis `dev`, nommée `type/numéro-sujet` (ex. `feat/9-recherche-filtres`).
